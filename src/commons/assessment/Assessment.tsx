@@ -79,27 +79,6 @@ const Assessment: React.FC = () => {
 
   const sortAssessments = (assessments: AssessmentOverview[]) => sortBy(assessments, [a => -a.id]);
 
-  const makeSubmissionButton = (overview: AssessmentOverview) => (
-    <Tooltip
-      disabled={overview.status === AssessmentStatuses.attempted}
-      content={'You can finalize after saving an answer for each question!'}
-      position={Position.RIGHT}
-    >
-      <Button
-        disabled={overview.status !== AssessmentStatuses.attempted}
-        icon={IconNames.CONFIRM}
-        intent={overview.status === AssessmentStatuses.attempted ? Intent.DANGER : Intent.NONE}
-        variant="minimal"
-        // intentional: each listing renders its own version of onClick
-        // tslint:disable-next-line:jsx-no-lambda
-        onClick={() => setBetchaAssessment(overview)}
-      >
-        <span>Finalize</span>
-        <span className="custom-hidden-xxs"> Submission</span>
-      </Button>
-    </Tooltip>
-  );
-
   // Rendering Logic
   const assessmentConfigToLoad = useLoaderData() as AssessmentConfiguration;
   const assessmentOverviews = useMemo(
@@ -160,10 +139,9 @@ const Assessment: React.FC = () => {
           overview={overview}
           renderAttemptButton={role !== Role.Student}
           renderGradingTooltip={false}
-          makeSubmissionButton={makeSubmissionButton}
         />
       )
-    );
+    )
 
     /** Opened assessments, that are released and can be attempted. */
     const isOverviewOpened = (overview: AssessmentOverview) =>
@@ -178,7 +156,6 @@ const Assessment: React.FC = () => {
         overview={overview}
         renderAttemptButton
         renderGradingTooltip={false}
-        makeSubmissionButton={makeSubmissionButton}
       />
     ));
 
@@ -193,7 +170,6 @@ const Assessment: React.FC = () => {
         overview={overview}
         renderAttemptButton
         renderGradingTooltip
-        makeSubmissionButton={makeSubmissionButton}
       />
     ));
 
