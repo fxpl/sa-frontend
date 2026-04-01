@@ -1,15 +1,12 @@
 import {
-  Button,
   Collapse,
   Dialog,
   DialogBody,
   DialogFooter,
   Intent,
   NonIdealState,
-  Position,
   Spinner,
   Text,
-  Tooltip
 } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import { sortBy } from 'lodash';
