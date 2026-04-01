@@ -590,26 +590,13 @@ const Playground: React.FC<PlaygroundProps> = props => {
   );
 
   // Compute this here to avoid re-rendering the button every keystroke
+  
+ 
   const persistenceIsDirty =
     persistenceFile && (!persistenceFile.lastSaved || persistenceFile.lastSaved < lastEdit);
   const persistenceButtons = useMemo(() => {
     return (
-      <ControlBarGoogleDriveButtons
-        isFolderModeEnabled={isFolderModeEnabled}
-        currentFile={persistenceFile}
-        loggedInAs={persistenceUser}
-        isDirty={persistenceIsDirty}
-        key="googledrive"
-        onClickSaveAs={() => dispatch(PersistenceActions.persistenceSaveFileAs())}
-        onClickOpen={() => dispatch(PersistenceActions.persistenceOpenPicker())}
-        onClickSave={
-          persistenceFile
-            ? () => dispatch(PersistenceActions.persistenceSaveFile(persistenceFile))
-            : undefined
-        }
-        onClickLogOut={() => dispatch(SessionActions.logoutGoogle())}
-        onPopoverOpening={() => dispatch(PersistenceActions.persistenceInitialise())}
-      />
+		null // Google Drive Button used to be here
     );
   }, [isFolderModeEnabled, persistenceFile, persistenceUser, persistenceIsDirty, dispatch]);
 

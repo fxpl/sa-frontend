@@ -1,5 +1,5 @@
 import {
-  Button,
+	Button,
   Collapse,
   Dialog,
   DialogBody,
@@ -79,7 +79,8 @@ const Assessment: React.FC = () => {
 
   const sortAssessments = (assessments: AssessmentOverview[]) => sortBy(assessments, [a => -a.id]);
 
-  const makeSubmissionButton = (overview: AssessmentOverview) => (
+
+const makeSubmissionButton = (overview: AssessmentOverview) => (
     <Tooltip
       disabled={overview.status === AssessmentStatuses.attempted}
       content={'You can finalize after saving an answer for each question!'}
@@ -160,7 +161,6 @@ const Assessment: React.FC = () => {
           overview={overview}
           renderAttemptButton={role !== Role.Student}
           renderGradingTooltip={false}
-          makeSubmissionButton={makeSubmissionButton}
         />
       )
     );
@@ -178,7 +178,6 @@ const Assessment: React.FC = () => {
         overview={overview}
         renderAttemptButton
         renderGradingTooltip={false}
-        makeSubmissionButton={makeSubmissionButton}
       />
     ));
 
@@ -193,7 +192,6 @@ const Assessment: React.FC = () => {
         overview={overview}
         renderAttemptButton
         renderGradingTooltip
-        makeSubmissionButton={makeSubmissionButton}
       />
     ));
 
@@ -227,6 +225,8 @@ const Assessment: React.FC = () => {
       </>
     );
   }
+
+
 
   // Define the warning text when finalising submissions
   const hasBonusXp = (betchaAssessment?.earlySubmissionXp as number) > 0;
