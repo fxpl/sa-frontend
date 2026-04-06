@@ -66,6 +66,7 @@ import SideContentAutograder from '../sideContent/content/SideContentAutograder'
 import SideContentContestLeaderboard from '../sideContent/content/SideContentContestLeaderboard';
 import SideContentContestVotingContainer from '../sideContent/content/SideContentContestVotingContainer';
 import SideContentToneMatrix from '../sideContent/content/SideContentToneMatrix';
+import { makeSubstVisualizerTabFrom } from 'src/pages/playground/PlaygroundTabs';
 import { SideContentProps } from '../sideContent/SideContent';
 import { changeSideContentHeight } from '../sideContent/SideContentActions';
 import { useSideContent } from '../sideContent/SideContentHelper';
@@ -601,6 +602,8 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
           id: SideContentType.autograder
         }
       );
+
+      tabs.push(makeSubstVisualizerTabFrom(workspaceLocation, output));
     }
 
     if (isGraded) {
