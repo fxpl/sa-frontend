@@ -328,9 +328,18 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
     pushLog(input);
   }, [handleEditorEval, handleRunAllTestcases, pushLog]);
 
+
   /* ================
      Helper Functions
      ================ */
+
+  const substVisualizerTab = useMemo(() => {
+    return makeSubstVisualizerTabFrom(workspaceLocation, output);
+  }, [
+    output,
+    workspaceLocation
+  ]);
+
   /**
    * Checks if there is a need to reset the workspace, then executes
    * a dispatch (in the props) if needed.
@@ -603,7 +612,7 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
         }
       );
 
-      tabs.push(makeSubstVisualizerTabFrom(workspaceLocation, output));
+      tabs.push(substVisualizerTab);
     }
 
     if (isGraded) {
