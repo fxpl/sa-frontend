@@ -859,18 +859,20 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
   };
 
   const replButtons = useMemo(() => {
-    const clearButton = (
-      <ControlBarClearButton
-        handleReplOutputClear={() => dispatch(WorkspaceActions.clearReplOutput(workspaceLocation))}
-        key="clear_repl"
-      />
-    );
-    const evalButton = (
-      <ControlBarEvalButton handleReplEval={handleReplEval} isRunning={isRunning} key="eval_repl" />
-    );
+    const clearButton =
+      selectedTab === SideContentType.substVisualizer ? null : (
+        <ControlBarClearButton
+          handleReplOutputClear={() => dispatch(WorkspaceActions.clearReplOutput(workspaceLocation))}
+          key="clear_repl"
+        />
+      );
+    const evalButton =
+      selectedTab === SideContentType.substVisualizer ? null : (
+        <ControlBarEvalButton handleReplEval={handleReplEval} isRunning={isRunning} key="eval_repl" />
+      );
 
     return [evalButton, clearButton];
-  }, [dispatch, isRunning, handleReplEval]);
+  }, [dispatch, isRunning, handleReplEval, selectedTab]);
 
   const editorContainerHandlers = useMemo(() => {
     return {
