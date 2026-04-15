@@ -159,6 +159,12 @@ const NavigationBar: React.FC = () => {
         icon: IconNames.TIMELINE_BAR_CHART,
         text: 'Leaderboard',
         disabled: !(isEnrolledInACourse && (enableContestLeaderboard || enableOverallLeaderboard))
+      },
+      {
+        to: '/playground',
+        icon: IconNames.CODE,
+        text: 'Statistics',
+        disabled: !isEnrolledInACourse
       }
     ];
   }, [
