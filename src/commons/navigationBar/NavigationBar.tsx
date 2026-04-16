@@ -161,10 +161,10 @@ const NavigationBar: React.FC = () => {
         disabled: !(isEnrolledInACourse && (enableContestLeaderboard || enableOverallLeaderboard))
       },
       {
-        to: '/playground',
-        icon: IconNames.CODE,
+        to: '/statisticsDashboard', // TODO: 
+        icon: IconNames.CODE,  // TODO: better icon
         text: 'Statistics',
-        disabled: !isEnrolledInACourse
+        disabled: !isEnrolledInACourse 
       }
     ];
   }, [
@@ -229,7 +229,8 @@ const NavigationBar: React.FC = () => {
       '/contributors',
       `/courses/${courseId}/sourcecast`,
       `/courses/${courseId}/achievements`,
-      `/courses/${courseId}/leaderboard`
+      `/courses/${courseId}/leaderboard`,
+      '/statisticsDashboard'
     ];
     const enableDesktopPopover =
       courseId != null && !!topNavbarNavlinks.find(x => location.pathname.startsWith(x));
@@ -326,6 +327,7 @@ const NavigationBar: React.FC = () => {
         <Route path="/courses/:courseId/achievements" element={null} />
         <Route path="/courses/:courseId/leaderboard/*" element={null} />
         <Route path="/sicpjs/:section?" element={<SicpNavigationBar />} />
+        <Route path="/statisticsDashboard" element={null} /> 
         <Route
           path="*"
           element={
