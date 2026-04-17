@@ -6,8 +6,12 @@
 
 
 
-export type QuizStatistic = {
-    
+export type QuizStats = {
+    userID: string;
+    quizID: string;
+    started: boolean;
+    passed: boolean;
+    // startTime & endTime?
 }
 
 export type ExerciseStatistic = {
@@ -16,9 +20,9 @@ export type ExerciseStatistic = {
 
 
 
-export type Statistic = {
+export type StudentStatistic = {
     userID: string;
-    quiz: QuizStatistic[];
+    quiz: QuizStats[];
     // exercise: ExerciseStatistic[];
     // lesson: 
 } 
