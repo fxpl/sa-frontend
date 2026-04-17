@@ -279,7 +279,10 @@ const newBackendSagaOne = combineSagaHandlers({
     if (!resp || !resp.ok) {
       return yield handleResponseError(resp);
     }
-
+    console.log("Innan save!");  
+    console.log(answer);
+    console.log(questionId);
+    
     yield call(showSuccessMessage, 'Saved!', 1000);
 
     // Now, update the answer for the question in the assessment in the store
