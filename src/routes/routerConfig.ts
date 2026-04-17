@@ -36,6 +36,7 @@ const NotFound = () => import('../pages/notFound/NotFound');
 const Welcome = () => import('../pages/welcome/Welcome');
 const Academy = () => import('../pages/academy/Academy');
 const MissionControl = () => import('../pages/missionControl/MissionControl');
+const StatisticsDashboard = () => import('../pages/statisticsDashboard/statisticsDashboard');
 const EditStory = async () => {
   const { EditStoryComponent } = await import('../pages/stories/Story');
   return { Component: EditStoryComponent };
@@ -144,6 +145,7 @@ export const getFullAcademyRouterConfig = ({
         ensureUserAndRole({ path: 'courses/:courseId/stories/view/:id', lazy: ViewStory }),
         ensureUserAndRole({ path: 'courses/:courseId/stories/edit/:id', lazy: EditStory }),
         ensureUserAndRole({ path: 'courses/:courseId/stories', lazy: Stories }),
+        ensureUserAndRole({ path: 'statisticsDashboard', lazy: StatisticsDashboard}),
         ...commonChildrenRoutes,
         { path: '*', lazy: NotFound }
       ]
