@@ -1,8 +1,25 @@
-import '../../styles/dashboard.scss'
-
+import { Button } from '@tremor/react';
+import * as MM from '../../features/statistics/middleman';
 
 const Dashboard: React.FC = () => {
-  return (<div className="card_box">  <h1>Hej</h1></div>);
+  
+  const someData = MM.TempReadData();
+  const all_questions = MM.TempGetAllQuestions();
+  const rows = [];
+  for (let i = 0; i < all_questions.length;i++) {
+    rows.push(<div>{i}</div>);
+  }
+
+
+  return (<div> <h1>Hej {someData} </h1><div> {rows}<div/></div> 
+    <Button
+      text='Clear Data'
+      onClick={MM.clearTempValues}
+      color='orange'
+      /> </div> 
+
+
+  );
 
 };
 

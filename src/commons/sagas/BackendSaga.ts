@@ -19,6 +19,7 @@ import {
 } from '../../features/grading/GradingTypes';
 import type { SourcecastData } from '../../features/sourceRecorder/SourceRecorderTypes';
 import SourcereelActions from '../../features/sourceRecorder/sourcereel/SourcereelActions';
+import * as MM from '../../features/statistics/middleman';
 import type { TeamFormationOverview } from '../../features/teamFormation/TeamFormationTypes';
 import SessionActions from '../application/actions/SessionActions';
 import { type OverallState, Role } from '../application/ApplicationTypes';
@@ -279,10 +280,11 @@ const newBackendSagaOne = combineSagaHandlers({
     if (!resp || !resp.ok) {
       return yield handleResponseError(resp);
     }
-    console.log("Innan save!");  
+    console.log("Innan save!");
+    MM.TempWriteData(+answer,questionId);
     console.log(answer);
     console.log(questionId);
-    
+
     yield call(showSuccessMessage, 'Saved!', 1000);
 
     // Now, update the answer for the question in the assessment in the store
