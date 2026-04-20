@@ -1,8 +1,7 @@
-import { Button } from '@tremor/react';
+/* eslint-disable simple-import-sort/imports */
 import * as MM from '../../features/statistics/middleman';
 
 const Dashboard: React.FC = () => {
-  
   const someData = MM.TempReadData();
   const all_questions = MM.TempGetAllQuestions();
   const rows = [];
@@ -10,15 +9,11 @@ const Dashboard: React.FC = () => {
     rows.push(<div>{i}</div>);
   }
 
-
-  return (<div> <h1>Hej {someData} </h1><div> {rows}<div/></div> 
-    <Button
-      text='Clear Data'
+  return (<div> <h1>Hej {someData} </h1><div> {rows}<div/></div>
+    <button
       onClick={MM.clearTempValues}
       color='orange'
-      /> </div> 
-
-
+      > Clear </button> </div> 
   );
 
 };
