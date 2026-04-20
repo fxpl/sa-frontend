@@ -1,23 +1,30 @@
-/* eslint-disable simple-import-sort/imports */
-import AssessmentOverviewCard from 'src/commons/assessment/AssessmentOverviewCard';
+ 
 import * as MM from '../../features/statistics/middleman';
+import { StatisticsOverview, StatisticsOverviewCard } from './statisticsTypes';
 
 const Dashboard: React.FC = () => {
   const someData = MM.TempReadData();
   const all_questions = MM.TempGetAllQuestions();
   const rows = [];
+  const overview : StatisticsOverview = {
+    id: 0,
+    openAt: 'va',
+    shortSummary: 'då',
+    story: null,
+    title: 'hej',
+    coverImage: 'https://robohash.org/set_set1/bgset_bg1/xichrOznHuqtMfRx'
+  };
+
   for (let i = 0; i < all_questions.length;i++) {
     rows.push(<div>{i}</div>);
   }
 
-  return (<div> <h1>Hej {someData} </h1><div> {rows}<div/></div>
-
-        <AssessmentOverviewCard
+  return (<div> <h1> Hej {someData} </h1><div> {rows}<div/></div>
+        <StatisticsOverviewCard
           key={3}
           overview={overview}
           renderAttemptButton
           renderGradingTooltip={false}
-
         />
     <button
       onClick={MM.clearTempValues}

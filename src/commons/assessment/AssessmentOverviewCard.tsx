@@ -66,7 +66,7 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
                 {`${beforeNow(overview.openAt) ? 'Opened' : 'Opens'}: ${getPrettyDate(
                   overview.openAt
                 )}`}
-              </Text>
+              </Text>SOverviewC
               {beforeNow(overview.openAt) && (
                 <Text className="listing-due-date">
                   <Icon className="listing-due-icon" size={12} icon={IconNames.TIME} />
@@ -101,7 +101,7 @@ const AssessmentOverviewCardTitle: React.FC<AssessmentOverviewCardTitleProps> = 
           <Tooltip
             className="listing-title-tooltip"
             content="This assessment is password-protected."
-          >
+          >AssessmentOverviewCardTitle
             <Icon icon="lock" />
           </Tooltip>
         ) : null}

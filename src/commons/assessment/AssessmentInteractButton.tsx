@@ -31,7 +31,7 @@ const AssessmentInteractButton: React.FC<Props> = ({ overview }) => {
         onClick={() =>
           dispatch(
             SessionActions.acknowledgeNotifications(filterNotificationsByAssessment(overview.id))
-          )
+           )
         }
       >
         <span data-testid="Assessment-Attempt-Button">{label}</span>
