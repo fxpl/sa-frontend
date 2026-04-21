@@ -280,8 +280,8 @@ const newBackendSagaOne = combineSagaHandlers({
     if (!resp || !resp.ok) {
       return yield handleResponseError(resp);
     }
-    console.log("Innan save!");
-    MM.TempWriteData(+answer,questionId);
+    console.log('Innan save!');
+    MM.TempWriteData(+answer, questionId);
     console.log(answer);
     console.log(questionId);
 

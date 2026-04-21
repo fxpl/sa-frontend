@@ -161,10 +161,10 @@ const NavigationBar: React.FC = () => {
         disabled: !(isEnrolledInACourse && (enableContestLeaderboard || enableOverallLeaderboard))
       },
       {
-        to: '/statisticsDashboard', // TODO: 
-        icon: IconNames.CODE,  // TODO: better icon
+        to: '/statisticsDashboard', // TODO:
+        icon: IconNames.CODE, // TODO: better icon
         text: 'Statistics',
-        disabled: !isEnrolledInACourse 
+        disabled: !isEnrolledInACourse
       }
     ];
   }, [
@@ -327,7 +327,7 @@ const NavigationBar: React.FC = () => {
         <Route path="/courses/:courseId/achievements" element={null} />
         <Route path="/courses/:courseId/leaderboard/*" element={null} />
         <Route path="/sicpjs/:section?" element={<SicpNavigationBar />} />
-        <Route path="/statisticsDashboard" element={null} /> 
+        <Route path="/statisticsDashboard" element={null} />
         <Route
           path="*"
           element={
