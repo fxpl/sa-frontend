@@ -54,7 +54,6 @@ const StatisticsOverviewCardTitle: React.FC<StatisticsOverviewCardTitleProps> = 
   </div>
 );
 
-
 export const StatisticsOverviewCard: React.FC<StatisticsOverviewCardProps> = ({
   overview,
   renderAttemptButton,
@@ -70,11 +69,7 @@ export const StatisticsOverviewCard: React.FC<StatisticsOverviewCardProps> = ({
             notificationFilter={filterNotificationsByAssessment(overview.id)}
             large={true}
           />
-          <img
-            alt="Assessment"
-            
-            src={overview.coverImage}
-          />
+          <img alt="Assessment" src={overview.coverImage} />
         </div>
         <div className={classNames('listing-text', !isMobileBreakpoint && 'col-xs-9')}>
           <StatisticsOverviewCardTitle
@@ -84,11 +79,11 @@ export const StatisticsOverviewCard: React.FC<StatisticsOverviewCardProps> = ({
           <div className="listing-description">
             <Markdown content={overview.shortSummary} />
           </div>
-          
-            <div>
-              <H6> This is an individual assessment. </H6>
-            </div>
-        
+
+          <div>
+            <H6> This is an individual assessment. </H6>
+          </div>
+
           <div className="listing-footer">
             <div>
               <Text className="listing-due-date">
@@ -110,15 +105,8 @@ export const StatisticsOverviewCard: React.FC<StatisticsOverviewCardProps> = ({
             </div>
           </div>
         </div>
-      <img
-      src='src/assets/statsprototyp.jpg'
-      />
+        <img src="src/assets/statsprototyp.jpg" />
       </Card>
-
     </div>
   );
 };
-
-
-
-

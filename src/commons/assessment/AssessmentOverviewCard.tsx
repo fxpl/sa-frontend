@@ -52,24 +52,24 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
             renderProgressStatus={renderGradingTooltip}
           />
           <div className="listing-description">
-
             <Markdown content={overview.shortSummary} />
           </div>
-          
+
           {isAdmin ? (
-            <div className="listing-team_information">
-              <H6> Admin </H6>
-              
-              <img
-                src='https://robohash.org/Linn'
-      
-              />
+            <div className="listing-statistics">
+              <div>
+                <H6> Started: 23/45 </H6>
+                <H6> Finished: 28/45 </H6>
+              </div>
+
+              <img src="https://robohash.org/Linn" />
             </div>
           ) : (
             <div>
               <H6> Student </H6>
             </div>
           )}
+
           <div className="listing-footer">
             <div>
               <Text className="listing-due-date">
@@ -78,7 +78,7 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
                   overview.openAt
                 )}`}
               </Text>
-  
+
               {beforeNow(overview.openAt) && (
                 <Text className="listing-due-date">
                   <Icon className="listing-due-icon" size={12} icon={IconNames.TIME} />

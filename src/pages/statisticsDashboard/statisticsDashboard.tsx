@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import * as MM from '../../features/statistics/middleman';
 import { StatisticsOverview, StatisticsOverviewCard } from './statisticsTypes';
 
