@@ -2,15 +2,16 @@ import { Card, Elevation, H4, H6, Icon, Intent, Position, Text, Tooltip } from '
 import { IconName, IconNames } from '@blueprintjs/icons';
 import classNames from 'classnames';
 import classes from 'src/styles/Academy.module.scss';
-
+import { Role } from '../application/ApplicationTypes';
 import defaultCoverImage from '../../assets/default_cover_image.jpg';
 import Markdown from '../Markdown';
 import NotificationBadge from '../notificationBadge/NotificationBadge';
 import { filterNotificationsByAssessment } from '../notificationBadge/NotificationBadgeHelper';
 import { beforeNow, getPrettyDate } from '../utils/DateHelper';
-import { useResponsive } from '../utils/Hooks';
+import { useResponsive, useSession } from '../utils/Hooks';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { AssessmentOverview } from './AssessmentTypes';
+import { getAcademyNavbarRightInfo } from '../navigationBar/subcomponents/AcademyNavigationBar';
 
 type AssessmentOverviewCardProps = {
   /** The assessment overview to display */
@@ -27,6 +28,9 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   renderGradingTooltip
 }) => {
   const { isMobileBreakpoint } = useResponsive();
+  const { role, courseId } = useSession();
+  const isAdmin = role === Role.Admin;
+  console.log(isAdmin);
   return (
     <div>
       <Card className="row listing" elevation={Elevation.ONE}>
@@ -48,15 +52,22 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
             renderProgressStatus={renderGradingTooltip}
           />
           <div className="listing-description">
+
             <Markdown content={overview.shortSummary} />
           </div>
-          {overview.maxTeamSize > 1 ? (
+          
+          {isAdmin ? (
             <div className="listing-team_information">
-              <H6> This is a team assessment. </H6>
+              <H6> Admin </H6>
+              
+              <img
+                src='https://robohash.org/Linn'
+      
+              />
             </div>
           ) : (
             <div>
-              <H6> This is an individual assessment. </H6>
+              <H6> Student </H6>
             </div>
           )}
           <div className="listing-footer">
