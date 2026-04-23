@@ -575,6 +575,7 @@ exports[`Playground tests > Playground renders correctly 1`] = `
                         </div>
                         <div
                           aria-controls="bp6-tab-panel_side-content-tabs_introduction"
+                          aria-disabled="false"
                           aria-expanded="true"
                           aria-selected="true"
                           class="bp6-tab side-content-tab"
@@ -612,6 +613,7 @@ exports[`Playground tests > Playground renders correctly 1`] = `
                         </div>
                         <div
                           aria-controls="bp6-tab-panel_side-content-tabs_data_visualizer"
+                          aria-disabled="false"
                           aria-expanded="false"
                           aria-selected="false"
                           class="bp6-tab side-content-tab"
@@ -649,6 +651,7 @@ exports[`Playground tests > Playground renders correctly 1`] = `
                         </div>
                         <div
                           aria-controls="bp6-tab-panel_side-content-tabs_cse_machine"
+                          aria-disabled="false"
                           aria-expanded="false"
                           aria-selected="false"
                           class="bp6-tab side-content-tab"
@@ -686,6 +689,7 @@ exports[`Playground tests > Playground renders correctly 1`] = `
                         </div>
                         <div
                           aria-controls="bp6-tab-panel_side-content-tabs_remote_execution"
+                          aria-disabled="false"
                           aria-expanded="false"
                           aria-selected="false"
                           class="bp6-tab side-content-tab"
@@ -2172,6 +2176,7 @@ exports[`Playground tests > Playground with link renders correctly 1`] = `
                         </div>
                         <div
                           aria-controls="bp6-tab-panel_side-content-tabs_introduction"
+                          aria-disabled="false"
                           aria-expanded="true"
                           aria-selected="true"
                           class="bp6-tab side-content-tab"
@@ -2209,6 +2214,7 @@ exports[`Playground tests > Playground with link renders correctly 1`] = `
                         </div>
                         <div
                           aria-controls="bp6-tab-panel_side-content-tabs_data_visualizer"
+                          aria-disabled="false"
                           aria-expanded="false"
                           aria-selected="false"
                           class="bp6-tab side-content-tab"
@@ -2246,6 +2252,7 @@ exports[`Playground tests > Playground with link renders correctly 1`] = `
                         </div>
                         <div
                           aria-controls="bp6-tab-panel_side-content-tabs_subst_visualiser"
+                          aria-disabled="false"
                           aria-expanded="false"
                           aria-selected="false"
                           class="bp6-tab side-content-tab"
@@ -2283,6 +2290,7 @@ exports[`Playground tests > Playground with link renders correctly 1`] = `
                         </div>
                         <div
                           aria-controls="bp6-tab-panel_side-content-tabs_remote_execution"
+                          aria-disabled="false"
                           aria-expanded="false"
                           aria-selected="false"
                           class="bp6-tab side-content-tab"
