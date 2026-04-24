@@ -1,48 +1,287 @@
-import * as MM from '../../features/statistics/middleman';
-import { StatisticsOverview, StatisticsOverviewCard } from './statisticsTypes';
+import {
+  Button,
+  Collapse,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  Intent,
+  NonIdealState,
+  Position,
+  Spinner,
+  Text,
+  Tooltip
+} from '@blueprintjs/core';
+import { IconNames } from '@blueprintjs/icons';
+import { sortBy } from 'lodash';
+import React, { type JSX, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Navigate, useLoaderData, useParams } from 'react-router';
+import SessionActions from 'src/commons/application/actions/SessionActions';
+import { Role } from 'src/commons/application/ApplicationTypes';
+import AssessmentNotFound from 'src/commons/assessment/AssessmentNotFound';
+import AssessmentOverviewCard from 'src/commons/assessment/AssessmentOverviewCard';
+import { AssessmentWorkspaceParams, AssessmentOverview, AssessmentConfiguration, AssessmentStatuses } from 'src/commons/assessment/AssessmentTypes';
+import AssessmentWorkspace, { AssessmentWorkspaceProps } from 'src/commons/assessmentWorkspace/AssessmentWorkspace';
+import ContentDisplay from 'src/commons/ContentDisplay';
+import ControlButton from 'src/commons/ControlButton';
+import Constants from 'src/commons/utils/Constants';
+import { beforeNow } from 'src/commons/utils/DateHelper';
+import { useSession, useTypedSelector } from 'src/commons/utils/Hooks';
+import { convertParamToInt } from 'src/commons/utils/ParamParseHelper';
+import { numberRegExp } from 'src/features/academy/AcademyTypes';
+import Messages, { sendToWebview } from 'src/features/vscode/messages';
 
-const Dashboard: React.FC = () => {
-  const someData = MM.TempReadData();
-  const all_questions = MM.TempGetAllQuestions();
-  const rows = [];
-  const overview: StatisticsOverview = {
-    id: 0,
-    openAt: 'va',
-    closeAt: 'Close',
-    shortSummary: 'då',
-    story: null,
-    title: 'hej',
-    coverImage: 'https://robohash.org/212.25.146.155.png'
+
+
+const Assessment: React.FC = () => {
+  const params = useParams<AssessmentWorkspaceParams>();
+  const [betchaAssessment, setBetchaAssessment] = useState<AssessmentOverview | null>(null);
+  const [showClosedAssessments, setShowClosedAssessments] = useState(false);
+  const [showOpenedAssessments, setShowOpenedAssessments] = useState(true);
+  const [showUpcomingAssessments, setShowUpcomingAssessments] = useState(true);
+
+  const { courseId, role, assessmentOverviews: assessmentOverviewsUnfiltered } = useSession();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (assessmentOverviewsUnfiltered && courseId) {
+      sendToWebview(
+        Messages.NotifyAssessmentsOverview(
+          assessmentOverviewsUnfiltered.map(oa => ({
+            type: oa.type,
+            closeAt: oa.closeAt,
+            id: oa.id,
+            isPublished: oa.isPublished,
+            title: oa.title
+          })),
+          courseId
+        )
+      );
+    }
+  }, [assessmentOverviewsUnfiltered, courseId]);
+
+  const toggleClosedAssessments = () => setShowClosedAssessments(!showClosedAssessments);
+  const toggleOpenAssessments = () => setShowOpenedAssessments(!showOpenedAssessments);
+  const toggleUpcomingAssessments = () => setShowUpcomingAssessments(!showUpcomingAssessments);
+  const setBetchaAssessmentNull = () => setBetchaAssessment(null);
+  const handleSubmitAssessment = () => {
+    if (betchaAssessment) {
+      dispatch(SessionActions.submitAssessment(betchaAssessment.id));
+      setBetchaAssessmentNull();
+    }
   };
 
-  for (let i = 0; i < all_questions.length; i++) {
-    rows.push(<div>{i}</div>);
+  const sortAssessments = (assessments: AssessmentOverview[]) => sortBy(assessments, [a => -a.id]);
+
+  // Rendering Logic
+  const assessmentConfigToLoad = useLoaderData() as AssessmentConfiguration;
+  const assessmentOverviews = useMemo(
+    () => assessmentOverviewsUnfiltered?.filter(ao => ao.type === assessmentConfigToLoad.type),
+    [assessmentConfigToLoad.type, assessmentOverviewsUnfiltered]
+  );
+
+  const fromLeaderboard: boolean = useTypedSelector(store => store.leaderboard.code) ? true : false;
+
+  // If assessmentId or questionId is defined but not numeric, redirect back to the Assessment overviews page
+  if (
+    (params.assessmentId && !params.assessmentId?.match(numberRegExp)) ||
+    (params.questionId && !params.questionId?.match(numberRegExp))
+  ) {
+    return <Navigate to={`/courses/${courseId}/${assessmentConfigToLoad.type}`} />;
   }
 
-  return (
-    <div>
-      {' '}
-      <h1> Hej {someData} </h1>
-      <div>
-        {' '}
-        {rows}
-        <div />
-      </div>
-      <StatisticsOverviewCard
-        key={3}
+  const assessmentId: number | null = convertParamToInt(params.assessmentId);
+  const questionId: number = convertParamToInt(params.questionId) || Constants.defaultQuestionId;
+
+  // If there is an assessment to render, create a workspace. The assessment
+  // overviews must still be loaded for this, to send the due date.
+  if (assessmentId !== null && assessmentOverviews !== undefined) {
+    const overview = assessmentOverviews.filter(a => a.id === assessmentId)[0];
+    if (!overview) {
+      return <AssessmentNotFound />;
+    }
+
+    const notAttempted = overview.status === AssessmentStatuses.not_attempted;
+    const assessmentWorkspaceProps: AssessmentWorkspaceProps = {
+      assessmentId,
+      questionId,
+      notAttempted,
+      needsPassword: !!overview.private && notAttempted,
+      canSave:
+        role !== Role.Student ||
+        (overview.status !== AssessmentStatuses.submitted && !beforeNow(overview.closeAt)),
+      assessmentConfiguration: assessmentConfigToLoad,
+      fromContestLeaderboard: fromLeaderboard
+    };
+    return <AssessmentWorkspace {...assessmentWorkspaceProps} />;
+  }
+
+  // Otherwise, render a list of assOwnProps
+  let display: JSX.Element;
+  if (assessmentOverviews === undefined) {
+    display = <NonIdealState description="Fetching assessment..." icon={<Spinner />} />;
+  } else if (assessmentOverviews.length === 0) {
+    display = <NonIdealState title="There are no assessments." icon={IconNames.FLAME} />;
+  } else {
+    /** Upcoming assessments, that are not released yet. */
+    const isOverviewUpcoming = (overview: AssessmentOverview) =>
+      !beforeNow(overview.closeAt) && !beforeNow(overview.openAt);
+    const upcomingCards = sortAssessments(assessmentOverviews.filter(isOverviewUpcoming)).map(
+      overview => (
+        <AssessmentOverviewCard
+          key={overview.id}
+          overview={overview}
+          renderAttemptButton={role !== Role.Student}
+          renderGradingTooltip={false}
+        />
+      )
+    );
+
+    /** Opened assessments, that are released and can be attempted. */
+    const isOverviewOpened = (overview: AssessmentOverview) =>
+      !beforeNow(overview.closeAt) &&
+      beforeNow(overview.openAt) &&
+      overview.status !== AssessmentStatuses.submitted;
+    const openedCards = sortAssessments(
+      assessmentOverviews.filter(overview => isOverviewOpened(overview))
+    ).map(overview => (
+      <AssessmentOverviewCard
+        key={overview.id}
         overview={overview}
         renderAttemptButton
         renderGradingTooltip={false}
       />
-      <button onClick={MM.clearTempValues} color="orange">
-        {' '}
-        Clear{' '}
-      </button>{' '}
+    ));
+
+    /** Closed assessments, that are past the due date or cannot be attempted further. */
+    const closedCards = sortAssessments(
+      assessmentOverviews.filter(
+        overview => !isOverviewOpened(overview) && !isOverviewUpcoming(overview)
+      )
+    ).map(overview => (
+      <AssessmentOverviewCard
+        key={overview.id}
+        overview={overview}
+        renderAttemptButton
+        renderGradingTooltip
+      />
+    ));
+
+    /** Render cards */
+    const upcomingCardsCollapsible = (
+      <>
+        {collapseButton('Upcoming', showUpcomingAssessments, toggleUpcomingAssessments)}
+        <Collapse isOpen={showUpcomingAssessments}>{upcomingCards}</Collapse>
+      </>
+    );
+
+    const openedCardsCollapsible = (
+      <>
+        {collapseButton('Open', showOpenedAssessments, toggleOpenAssessments)}
+        <Collapse isOpen={showOpenedAssessments}>{openedCards}</Collapse>
+      </>
+    );
+
+    const closedCardsCollapsible = (
+      <>
+        {collapseButton('Closed', showClosedAssessments, toggleClosedAssessments)}
+        <Collapse isOpen={showClosedAssessments}>{closedCards}</Collapse>
+      </>
+    );
+
+    display = (
+      <>
+        {upcomingCards.length > 0 ? upcomingCardsCollapsible : null}
+        {openedCards.length > 0 ? openedCardsCollapsible : null}
+        {closedCards.length > 0 ? closedCardsCollapsible : null}
+      </>
+    );
+  }
+
+  // Define the warning text when finalising submissions
+  const hasBonusXp = (betchaAssessment?.earlySubmissionXp as number) > 0;
+  const warningText = hasBonusXp ? (
+    <p>
+      Finalising your submission early grants you additional XP, but{' '}
+      <span className="warning">this action is irreversible.</span>
+    </p>
+  ) : (
+    <p>
+      Finalising your submission early does not grant you additional XP, and{' '}
+      <span className="warning">this action is irreversible.</span>
+    </p>
+  );
+
+  // Define the betcha dialog (in each card's menu)
+  const submissionText = betchaAssessment ? (
+    <p>
+      You are about to finalise your submission for the {betchaAssessment.type.toLowerCase()}{' '}
+      <i>&quot;{betchaAssessment.title}&quot;</i>.
+    </p>
+  ) : (
+    <p>You are about to finalise your submission.</p>
+  );
+  const betchaText = (
+    <>
+      {submissionText}
+      {warningText}
+    </>
+  );
+  const betchaDialog = (
+    <Dialog
+      className="betcha-dialog"
+      icon={IconNames.ERROR}
+      isCloseButtonShown={true}
+      isOpen={betchaAssessment !== null}
+      onClose={setBetchaAssessmentNull}
+      title="Finalise submission?"
+    >
+      <DialogBody>
+        <Text>{betchaText}</Text>
+      </DialogBody>
+      <DialogFooter
+        actions={
+          <>
+            <ControlButton
+              label="Cancel"
+              onClick={setBetchaAssessmentNull}
+              options={{ minimal: false }}
+            />
+            <ControlButton
+              label="Finalise"
+              onClick={handleSubmitAssessment}
+              options={{ minimal: false, intent: Intent.DANGER }}
+            />
+          </>
+        }
+      />
+    </Dialog>
+  );
+
+  // Finally, render the ContentDisplay.
+  return (
+    <div className="Assessment">
+      <ContentDisplay
+        display={display}
+        loadContentDispatch={() => dispatch(SessionActions.fetchAssessmentOverviews())}
+      />
+      {betchaDialog}
     </div>
   );
 };
 
-export const Component = Dashboard;
-Component.displayName = 'Dashboard';
+const collapseButton = (label: string, isOpen: boolean, toggleFunc: () => void) => (
+  <ControlButton
+    label={label}
+    icon={isOpen ? IconNames.CARET_DOWN : IconNames.CARET_RIGHT}
+    onClick={toggleFunc}
+    options={{ minimal: true, className: 'collapse-button' }}
+  />
+);
 
-export default Dashboard;
+// react-router lazy loading
+// https://reactrouter.com/en/main/route/lazy
+export const Component = Assessment;
+Component.displayName = 'Assessment';
+
+export default Assessment;

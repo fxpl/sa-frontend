@@ -3,6 +3,7 @@ import { redirect, replace, type RouteObject, Routes } from 'react-router';
 import Constants from 'src/commons/utils/Constants';
 
 import { GuardedRoute } from './routeGuard';
+import { AssessmentConfiguration } from 'src/commons/assessment/AssessmentTypes';
 
 /**
  * Partial migration to be compatible with react-router v6.4 data loader APIs.
@@ -89,6 +90,19 @@ export const getFullAcademyRouterConfig = ({
     return null;
   };
 
+  const mockAssessmentConfig: AssessmentConfiguration = {
+    assessmentConfigId: 1,
+    type: 'Missions',
+    isManuallyGraded: true,
+    isGradingAutoPublished: false,
+    displayInDashboard: true,
+    isMinigame: false,
+    hasTokenCounter: false,
+    hasVotingFeatures: false,
+    hoursBeforeEarlyXpDecay: 48,
+    earlySubmissionXp: 200
+  };
+
   const ensureUserAndRole = (r: RouteObject) => {
     return new GuardedRoute(r)
       .check(s => s.session.name !== undefined, '/login')
@@ -145,7 +159,7 @@ export const getFullAcademyRouterConfig = ({
         ensureUserAndRole({ path: 'courses/:courseId/stories/view/:id', lazy: ViewStory }),
         ensureUserAndRole({ path: 'courses/:courseId/stories/edit/:id', lazy: EditStory }),
         ensureUserAndRole({ path: 'courses/:courseId/stories', lazy: Stories }),
-        ensureUserAndRole({ path: 'statisticsDashboard', lazy: StatisticsDashboard }),
+        ensureUserAndRole({ path: 'statisticsDashboard', lazy: StatisticsDashboard, loader: () => mockAssessmentConfig }),
         ...commonChildrenRoutes,
         { path: '*', lazy: NotFound }
       ]

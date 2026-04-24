@@ -12,6 +12,7 @@ import { useResponsive, useSession } from '../utils/Hooks';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { AssessmentOverview } from './AssessmentTypes';
 import { getAcademyNavbarRightInfo } from '../navigationBar/subcomponents/AcademyNavigationBar';
+import { TempGetAllQuestions } from 'src/features/statistics/middleman';
 
 type AssessmentOverviewCardProps = {
   /** The assessment overview to display */
@@ -30,6 +31,9 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   const { isMobileBreakpoint } = useResponsive();
   const { role, courseId } = useSession();
   const isAdmin = role === Role.Admin;
+  
+  const statsAllQuestions = TempGetAllQuestions();
+
   console.log(isAdmin);
   return (
     <div>
@@ -58,7 +62,10 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
           {isAdmin ? (
             <div className="listing-statistics">
               <div>
-                <H6> Started: 23/45 </H6>
+                <H6> 
+                {statsAllQuestions.length > 0 ? (statsAllQuestions) : "No answers yet..."}
+                 </H6>
+                
                 <H6> Finished: 28/45 </H6>
               </div>
 
