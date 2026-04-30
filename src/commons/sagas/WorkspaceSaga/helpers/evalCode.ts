@@ -165,9 +165,10 @@ export function* evalCodeSaga(
   function* getWorkspaceData() {
     const workspace = yield* selectWorkspace(workspaceLocation);
     const commons = pick(workspace, ['isFolderModeEnabled', 'stepLimit']);
+    const { usingSubst } = yield* selectWorkspace(workspaceLocation);
 
     if (workspaceLocation === 'sicp' || workspaceLocation === 'playground') {
-      const { currentStep, updateCse, usingCse, usingSubst } =
+      const { currentStep, updateCse, usingCse } =
         yield* selectWorkspace(workspaceLocation);
 
       return {
@@ -195,7 +196,7 @@ export function* evalCodeSaga(
       currentStep: -1,
       cseIsActive: false,
       needUpdateCse: false,
-      substIsActive: false
+      substIsActive: usingSubst
     };
   }
 

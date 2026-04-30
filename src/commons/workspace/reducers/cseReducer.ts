@@ -15,7 +15,8 @@ export const handleCseAndStepperActions = (
     })
     .addCase(WorkspaceActions.toggleUsingSubst, (state, action) => {
       const { workspaceLocation } = action.payload;
-      if (workspaceLocation === 'playground' || workspaceLocation === 'sicp') {
+      if (workspaceLocation === 'playground' || workspaceLocation === 'sicp'
+        || workspaceLocation === "assessment") {
         state[workspaceLocation].usingSubst = action.payload.usingSubst;
       }
     })

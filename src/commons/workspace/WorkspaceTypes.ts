@@ -22,6 +22,7 @@ type AssessmentWorkspaceAttr = {
   readonly currentAssessment?: number;
   readonly currentQuestion?: number;
   readonly hasUnsavedChanges: boolean;
+  readonly usingSubst: boolean;
 };
 type AssessmentWorkspaceState = AssessmentWorkspaceAttr & WorkspaceState;
 
