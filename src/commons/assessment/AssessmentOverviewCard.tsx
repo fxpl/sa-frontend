@@ -12,7 +12,8 @@ import { useResponsive, useSession } from '../utils/Hooks';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { AssessmentOverview } from './AssessmentTypes';
 import { getAcademyNavbarRightInfo } from '../navigationBar/subcomponents/AcademyNavigationBar';
-import { TempGetAllQuestions } from 'src/features/statistics/middleman';
+import { TempGetAllQuestions, TempGetStatsById } from 'src/features/statistics/middleman';
+import { statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
 
 type AssessmentOverviewCardProps = {
   /** The assessment overview to display */
@@ -34,7 +35,12 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   
   const statsAllQuestions = TempGetAllQuestions();
 
-  console.log(isAdmin);
+  const stat = TempGetStatsById(overview.id);
+  // console.log(stat);  
+  if (stat !== null) {
+    statisticsGetNumberOfCorrectAnswers(stat.assessment,stat?.questionId);
+
+  }
   return (
     <div>
       <Card className="row listing" elevation={Elevation.ONE}>
@@ -63,7 +69,7 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
             <div className="listing-statistics">
               <div>
                 <H6> 
-                {statsAllQuestions.length > 0 ? (statsAllQuestions) : "No answers yet..."}
+                {statsAllQuestions.length > 0 ? (stat?.answer) : "No answers yet..."}
                  </H6>
                 
                 <H6> Finished: 28/45 </H6>

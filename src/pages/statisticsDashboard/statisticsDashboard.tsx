@@ -75,6 +75,8 @@ const Assessment: React.FC = () => {
 
   // Rendering Logic
   const assessmentConfigToLoad = useLoaderData() as AssessmentConfiguration;
+  // FIXME: Felix Shower thought nullcheck here and do not mock 
+  
   const assessmentOverviews = useMemo(
     () => assessmentOverviewsUnfiltered?.filter(ao => ao.type === assessmentConfigToLoad.type),
     [assessmentConfigToLoad.type, assessmentOverviewsUnfiltered]

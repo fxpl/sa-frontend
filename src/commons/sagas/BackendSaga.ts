@@ -276,17 +276,17 @@ const newBackendSagaOne = combineSagaHandlers({
     const questionId = action.payload.id;
     const answer = action.payload.answer;
 
+    
+
     const resp: Response | null = yield call(postAnswer, questionId, answer, tokens);
     if (!resp || !resp.ok) {
       return yield handleResponseError(resp);
     }
     console.log('Innan save!');
-    MM.TempWriteData(+answer, questionId);
     console.log(answer);
     console.log(questionId);
-
     yield call(showSuccessMessage, 'Saved!', 1000);
-
+    
     // Now, update the answer for the question in the assessment in the store
     const assessmentId: number = yield select(
       (state: OverallState) => state.workspaces.assessment.currentAssessment!
@@ -294,6 +294,10 @@ const newBackendSagaOne = combineSagaHandlers({
     const assessment: any = yield select(
       (state: OverallState) => state.session.assessments[assessmentId]
     );
+    
+    MM.TempWriteData(+answer, questionId, assessment);
+
+    console.log(assessment);  
     const newQuestions = assessment.questions.slice().map((question: Question) => {
       if (question.id === questionId) {
         return { ...question, answer };
