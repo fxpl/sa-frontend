@@ -16,7 +16,6 @@ import { Navigate, useLoaderData, useParams } from 'react-router';
 import SessionActions from 'src/commons/application/actions/SessionActions';
 import { Role } from 'src/commons/application/ApplicationTypes';
 import AssessmentNotFound from 'src/commons/assessment/AssessmentNotFound';
-import AssessmentOverviewCard from 'src/commons/assessment/AssessmentOverviewCard';
 import { AssessmentWorkspaceParams, AssessmentOverview, AssessmentConfiguration, AssessmentStatuses } from 'src/commons/assessment/AssessmentTypes';
 import AssessmentWorkspace, { AssessmentWorkspaceProps } from 'src/commons/assessmentWorkspace/AssessmentWorkspace';
 import ContentDisplay from 'src/commons/ContentDisplay';
@@ -27,6 +26,7 @@ import { useSession, useTypedSelector } from 'src/commons/utils/Hooks';
 import { convertParamToInt } from 'src/commons/utils/ParamParseHelper';
 import { numberRegExp } from 'src/features/academy/AcademyTypes';
 import Messages, { sendToWebview } from 'src/features/vscode/messages';
+import StatisticsOverviewCard from './StatisticsOverviewCard';
 
 // TODO: Create new card variants 
 
@@ -127,7 +127,7 @@ const Assessment: React.FC = () => {
       !beforeNow(overview.closeAt) && !beforeNow(overview.openAt);
     const upcomingCards = sortAssessments(assessmentOverviews.filter(isOverviewUpcoming)).map(
       overview => (
-        <AssessmentOverviewCard
+        <StatisticsOverviewCard
           key={overview.id}
           overview={overview}
           renderAttemptButton={role !== Role.Student}
@@ -144,7 +144,7 @@ const Assessment: React.FC = () => {
     const openedCards = sortAssessments(
       assessmentOverviews.filter(overview => isOverviewOpened(overview))
     ).map(overview => (
-      <AssessmentOverviewCard
+      <StatisticsOverviewCard
         key={overview.id}
         overview={overview}
         renderAttemptButton
@@ -158,7 +158,7 @@ const Assessment: React.FC = () => {
         overview => !isOverviewOpened(overview) && !isOverviewUpcoming(overview)
       )
     ).map(overview => (
-      <AssessmentOverviewCard
+      <StatisticsOverviewCard
         key={overview.id}
         overview={overview}
         renderAttemptButton

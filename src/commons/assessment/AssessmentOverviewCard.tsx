@@ -1,19 +1,16 @@
 import { Card, Elevation, H4, H6, Icon, Intent, Position, Text, Tooltip } from '@blueprintjs/core';
 import { IconName, IconNames } from '@blueprintjs/icons';
 import classNames from 'classnames';
-import classes from 'src/styles/Academy.module.scss';
-import { Role } from '../application/ApplicationTypes';
+import { JSX } from 'react';
+
 import defaultCoverImage from '../../assets/default_cover_image.jpg';
 import Markdown from '../Markdown';
 import NotificationBadge from '../notificationBadge/NotificationBadge';
 import { filterNotificationsByAssessment } from '../notificationBadge/NotificationBadgeHelper';
 import { beforeNow, getPrettyDate } from '../utils/DateHelper';
-import { useResponsive, useSession } from '../utils/Hooks';
+import { useResponsive } from '../utils/Hooks';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { AssessmentOverview } from './AssessmentTypes';
-import { getAcademyNavbarRightInfo } from '../navigationBar/subcomponents/AcademyNavigationBar';
-import { TempGetAllQuestions, TempGetStatsById } from 'src/features/statistics/middleman';
-import { statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
 
 type AssessmentOverviewCardProps = {
   /** The assessment overview to display */
@@ -21,27 +18,17 @@ type AssessmentOverviewCardProps = {
   /** Will only render the attempt button if true, regardless of attempt status. */
   renderAttemptButton: boolean;
   renderGradingTooltip: boolean;
+  makeSubmissionButton: (overview: AssessmentOverview) => JSX.Element;
 };
 
 /** A card to display `AssessmentOverview`s. */
 const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   overview,
   renderAttemptButton,
-  renderGradingTooltip
+  renderGradingTooltip,
+  makeSubmissionButton
 }) => {
   const { isMobileBreakpoint } = useResponsive();
-  const { role, courseId } = useSession();
-  const isAdmin = role === Role.Admin;
-  
-  const statsAllQuestions = TempGetAllQuestions();
-
-  const stat = TempGetStatsById(overview.id);
-  
-  console.log(stat);  
-  if (stat !== null) {
-    statisticsGetNumberOfCorrectAnswers(stat.assessment,stat?.questionId);
-
-  }
   return (
     <div>
       <Card className="row listing" elevation={Elevation.ONE}>
@@ -61,29 +48,20 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
           <AssessmentOverviewCardTitle
             overview={overview}
             renderProgressStatus={renderGradingTooltip}
+            makeSubmissionButton={makeSubmissionButton}
           />
           <div className="listing-description">
             <Markdown content={overview.shortSummary} />
           </div>
-
-          {isAdmin ? (
-            <div className="listing-statistics">
-              <div>
-                <H6> 
-                {statsAllQuestions.length > 0 ? (stat?.answer) : "No answers yet..."}
-                 </H6>
-                
-                <H6> Finished: 28/45 </H6>
-              </div>
-
-              <img src="https://robohash.org/Linn" />
+          {overview.maxTeamSize > 1 ? (
+            <div className="listing-team_information">
+              <H6> This is a team assessment. </H6>
             </div>
           ) : (
             <div>
-              <H6> Student </H6>
+              <H6> This is an individual assessment. </H6>
             </div>
           )}
-
           <div className="listing-footer">
             <div>
               <Text className="listing-due-date">
@@ -92,7 +70,6 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
                   overview.openAt
                 )}`}
               </Text>
-
               {beforeNow(overview.openAt) && (
                 <Text className="listing-due-date">
                   <Icon className="listing-due-icon" size={12} icon={IconNames.TIME} />
@@ -113,11 +90,13 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 type AssessmentOverviewCardTitleProps = {
   overview: AssessmentOverview;
   renderProgressStatus: boolean;
+  makeSubmissionButton: (overview: AssessmentOverview) => JSX.Element;
 };
 
 const AssessmentOverviewCardTitle: React.FC<AssessmentOverviewCardTitleProps> = ({
   overview,
-  renderProgressStatus
+  renderProgressStatus,
+  makeSubmissionButton
 }) => (
   <div className="listing-header">
     <Text ellipsize={true}>
@@ -128,13 +107,13 @@ const AssessmentOverviewCardTitle: React.FC<AssessmentOverviewCardTitleProps> = 
             className="listing-title-tooltip"
             content="This assessment is password-protected."
           >
-            AssessmentOverviewCardTitle
             <Icon icon="lock" />
           </Tooltip>
         ) : null}
         {renderProgressStatus ? showGradingTooltip(overview.isGradingPublished) : null}
       </H4>
     </Text>
+    <div className="listing-button">{makeSubmissionButton(overview)}</div>
   </div>
 );
 
