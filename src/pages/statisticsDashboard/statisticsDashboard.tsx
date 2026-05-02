@@ -1,15 +1,12 @@
 import {
-  Button,
   Collapse,
   Dialog,
   DialogBody,
   DialogFooter,
   Intent,
   NonIdealState,
-  Position,
   Spinner,
   Text,
-  Tooltip
 } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import { sortBy } from 'lodash';
@@ -31,7 +28,7 @@ import { convertParamToInt } from 'src/commons/utils/ParamParseHelper';
 import { numberRegExp } from 'src/features/academy/AcademyTypes';
 import Messages, { sendToWebview } from 'src/features/vscode/messages';
 
-
+// TODO: Create new card variants 
 
 const Assessment: React.FC = () => {
   const params = useParams<AssessmentWorkspaceParams>();
