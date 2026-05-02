@@ -159,7 +159,11 @@ export const getFullAcademyRouterConfig = ({
         ensureUserAndRole({ path: 'courses/:courseId/stories/view/:id', lazy: ViewStory }),
         ensureUserAndRole({ path: 'courses/:courseId/stories/edit/:id', lazy: EditStory }),
         ensureUserAndRole({ path: 'courses/:courseId/stories', lazy: Stories }),
-        ensureUserAndRole({ path: 'statisticsDashboard', lazy: StatisticsDashboard, loader: () => mockAssessmentConfig }),
+        ensureUserAndRole({
+          path: 'statisticsDashboard',
+          lazy: StatisticsDashboard,
+          loader: () => mockAssessmentConfig
+        }),
         ...commonChildrenRoutes,
         { path: '*', lazy: NotFound }
       ]

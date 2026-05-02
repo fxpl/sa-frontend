@@ -30,15 +30,14 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   const { isMobileBreakpoint } = useResponsive();
   const { role } = useSession();
   const isAdmin = role === Role.Admin;
-  
+
   const statsAllQuestions = TempGetAllQuestions();
 
   const stat = TempGetStatsById(overview.id);
-  
-  console.log(stat);  
-  if (stat !== null) {
-    statisticsGetNumberOfCorrectAnswers(stat.assessment,stat?.questionId);
 
+  console.log(stat);
+  if (stat !== null) {
+    statisticsGetNumberOfCorrectAnswers(stat.assessment, stat?.questionId);
   }
   return (
     <div>
@@ -67,10 +66,8 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
           {isAdmin ? (
             <div className="listing-statistics">
               <div>
-                <H6> 
-                {statsAllQuestions.length > 0 ? (stat?.answer) : "No answers yet..."}
-                 </H6>
-                
+                <H6>{statsAllQuestions.length > 0 ? stat?.answer : 'No answers yet...'}</H6>
+
                 <H6> Finished: 28/45 </H6>
               </div>
 

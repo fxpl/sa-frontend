@@ -6,7 +6,7 @@ import {
   Intent,
   NonIdealState,
   Spinner,
-  Text,
+  Text
 } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import { sortBy } from 'lodash';
@@ -16,8 +16,15 @@ import { Navigate, useLoaderData, useParams } from 'react-router';
 import SessionActions from 'src/commons/application/actions/SessionActions';
 import { Role } from 'src/commons/application/ApplicationTypes';
 import AssessmentNotFound from 'src/commons/assessment/AssessmentNotFound';
-import { AssessmentWorkspaceParams, AssessmentOverview, AssessmentConfiguration, AssessmentStatuses } from 'src/commons/assessment/AssessmentTypes';
-import AssessmentWorkspace, { AssessmentWorkspaceProps } from 'src/commons/assessmentWorkspace/AssessmentWorkspace';
+import {
+  AssessmentWorkspaceParams,
+  AssessmentOverview,
+  AssessmentConfiguration,
+  AssessmentStatuses
+} from 'src/commons/assessment/AssessmentTypes';
+import AssessmentWorkspace, {
+  AssessmentWorkspaceProps
+} from 'src/commons/assessmentWorkspace/AssessmentWorkspace';
 import ContentDisplay from 'src/commons/ContentDisplay';
 import ControlButton from 'src/commons/ControlButton';
 import Constants from 'src/commons/utils/Constants';
@@ -28,7 +35,7 @@ import { numberRegExp } from 'src/features/academy/AcademyTypes';
 import Messages, { sendToWebview } from 'src/features/vscode/messages';
 import StatisticsOverviewCard from './StatisticsOverviewCard';
 
-// TODO: Create new card variants 
+// TODO: Create new card variants
 
 const Assessment: React.FC = () => {
   const params = useParams<AssessmentWorkspaceParams>();
@@ -72,8 +79,8 @@ const Assessment: React.FC = () => {
 
   // Rendering Logic
   const assessmentConfigToLoad = useLoaderData() as AssessmentConfiguration;
-  // FIXME: Felix Shower thought nullcheck here and do not mock 
-  
+  // FIXME: Felix Shower thought nullcheck here and do not mock
+
   const assessmentOverviews = useMemo(
     () => assessmentOverviewsUnfiltered?.filter(ao => ao.type === assessmentConfigToLoad.type),
     [assessmentConfigToLoad.type, assessmentOverviewsUnfiltered]
