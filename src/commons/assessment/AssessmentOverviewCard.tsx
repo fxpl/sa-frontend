@@ -36,7 +36,8 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   const statsAllQuestions = TempGetAllQuestions();
 
   const stat = TempGetStatsById(overview.id);
-  // console.log(stat);  
+  
+  console.log(stat);  
   if (stat !== null) {
     statisticsGetNumberOfCorrectAnswers(stat.assessment,stat?.questionId);
 
