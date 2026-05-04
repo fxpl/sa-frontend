@@ -22,6 +22,7 @@ import { onClickProgress } from 'src/features/assessments/AssessmentUtils';
 import LeaderboardActions from 'src/features/leaderboard/LeaderboardActions';
 import Messages, { sendToWebview } from 'src/features/vscode/messages';
 import { mobileOnlyTabIds } from 'src/pages/playground/PlaygroundTabs';
+import { makeSubstVisualizerTabFrom } from 'src/pages/playground/PlaygroundTabs';
 
 import { initSession, log } from '../../features/eventLogging';
 import {
@@ -66,7 +67,6 @@ import SideContentAutograder from '../sideContent/content/SideContentAutograder'
 import SideContentContestLeaderboard from '../sideContent/content/SideContentContestLeaderboard';
 import SideContentContestVotingContainer from '../sideContent/content/SideContentContestVotingContainer';
 import SideContentToneMatrix from '../sideContent/content/SideContentToneMatrix';
-import { makeSubstVisualizerTabFrom } from 'src/pages/playground/PlaygroundTabs';
 import { SideContentProps } from '../sideContent/SideContent';
 import { changeSideContentHeight } from '../sideContent/SideContentActions';
 import { useSideContent } from '../sideContent/SideContentHelper';
@@ -317,7 +317,6 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
   const activeTab = useRef(selectedTab);
   activeTab.current = selectedTab;
   const handleEval = useCallback(() => {
-
     if (activeTab.current === SideContentType.substVisualizer) {
       handleUsingSubst(true);
     } else {
@@ -339,17 +338,13 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
     pushLog(input);
   }, [handleEditorEval, handleRunAllTestcases, pushLog]);
 
-
   /* ================
      Helper Functions
      ================ */
 
   const substVisualizerTab = useMemo(() => {
     return makeSubstVisualizerTabFrom(workspaceLocation, output);
-  }, [
-    output,
-    workspaceLocation
-  ]);
+  }, [output, workspaceLocation]);
 
   /**
    * Checks if there is a need to reset the workspace, then executes
@@ -624,8 +619,10 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
         }
       );
 
-      if (question.type === QuestionTypes.programming
-          && (question.library.chapter === 1 || question.library.chapter === 2)) {
+      if (
+        question.type === QuestionTypes.programming &&
+        (question.library.chapter === 1 || question.library.chapter === 2)
+      ) {
         tabs.push(substVisualizerTab);
       }
     }
@@ -877,13 +874,19 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
     const clearButton =
       selectedTab === SideContentType.substVisualizer ? null : (
         <ControlBarClearButton
-          handleReplOutputClear={() => dispatch(WorkspaceActions.clearReplOutput(workspaceLocation))}
+          handleReplOutputClear={() =>
+            dispatch(WorkspaceActions.clearReplOutput(workspaceLocation))
+          }
           key="clear_repl"
         />
       );
     const evalButton =
       selectedTab === SideContentType.substVisualizer ? null : (
-        <ControlBarEvalButton handleReplEval={handleReplEval} isRunning={isRunning} key="eval_repl" />
+        <ControlBarEvalButton
+          handleReplEval={handleReplEval}
+          isRunning={isRunning}
+          key="eval_repl"
+        />
       );
 
     return [evalButton, clearButton];
@@ -1049,7 +1052,8 @@ It is safe to close this window.`}
     output: output,
     replValue: replValue,
     usingSubst: usingSubst,
-    hidden: selectedTab === SideContentType.substVisualizer || selectedTab === SideContentType.cseMachine,
+    hidden:
+      selectedTab === SideContentType.substVisualizer || selectedTab === SideContentType.cseMachine,
     sourceChapter: question?.library?.chapter || Chapter.SOURCE_4,
     sourceVariant: question.library.variant ?? Variant.DEFAULT,
     externalLibrary: question?.library?.external?.name || 'NONE',

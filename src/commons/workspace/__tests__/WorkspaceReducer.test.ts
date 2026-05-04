@@ -2528,7 +2528,9 @@ describe('TOGGLE_USING_SUBST', () => {
       const location: WorkspaceLocation = action.payload.workspaceLocation;
 
       const expectedResult =
-        location === playgroundWorkspace || location === sicpWorkspace || location == assessmentWorkspace
+        location === playgroundWorkspace ||
+        location === sicpWorkspace ||
+        location == assessmentWorkspace
           ? {
               ...defaultWorkspaceManager,
               [location]: {

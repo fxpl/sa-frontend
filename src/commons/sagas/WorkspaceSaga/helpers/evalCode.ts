@@ -168,8 +168,7 @@ export function* evalCodeSaga(
     const { usingSubst } = yield* selectWorkspace(workspaceLocation);
 
     if (workspaceLocation === 'sicp' || workspaceLocation === 'playground') {
-      const { currentStep, updateCse, usingCse } =
-        yield* selectWorkspace(workspaceLocation);
+      const { currentStep, updateCse, usingCse } = yield* selectWorkspace(workspaceLocation);
 
       return {
         ...commons,
