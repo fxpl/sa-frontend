@@ -15,8 +15,8 @@ import type {
   EditorTabState,
   SubmissionsTableFilters,
   WorkspaceLocation,
-  WorkspaceLocationsWithTools,
   WorkspaceLocationsWithSubst,
+  WorkspaceLocationsWithTools,
   WorkspaceState
 } from './WorkspaceTypes';
 

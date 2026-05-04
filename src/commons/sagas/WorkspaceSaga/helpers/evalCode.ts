@@ -167,7 +167,8 @@ export function* evalCodeSaga(
     const commons = pick(workspace, ['isFolderModeEnabled', 'stepLimit']);
 
     if (workspaceLocation === 'sicp' || workspaceLocation === 'playground') {
-      const { currentStep, updateCse, usingCse, usingSubst } = yield* selectWorkspace(workspaceLocation);
+      const { currentStep, updateCse, usingCse, usingSubst } =
+        yield* selectWorkspace(workspaceLocation);
 
       return {
         ...commons,

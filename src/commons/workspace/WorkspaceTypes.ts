@@ -17,7 +17,10 @@ export const EVAL_SILENT = 'EVAL_SILENT';
 
 export type WorkspaceLocation = keyof WorkspaceManagerState;
 export type WorkspaceLocationsWithTools = Extract<WorkspaceLocation, 'playground' | 'sicp'>;
-export type WorkspaceLocationsWithSubst = Extract<WorkspaceLocation, 'playground' | 'sicp' | 'assessment'>;
+export type WorkspaceLocationsWithSubst = Extract<
+  WorkspaceLocation,
+  'playground' | 'sicp' | 'assessment'
+>;
 
 type AssessmentWorkspaceAttr = {
   readonly currentAssessment?: number;
