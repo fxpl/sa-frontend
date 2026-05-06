@@ -121,11 +121,11 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 };
 
 
-async function Table(numberOfQuestions : number, uniqueAnswers : number[]) {
+function Table(numberOfQuestions : number, uniqueAnswers : number[]) {
   const questions = [];
   const answers = [];
-  const students = await GetTotalNumberOfStudents();
-  console.log("students: ", students);
+  //const students = await GetTotalNumberOfStudents();
+  //console.log("students: ", students);
   for (let i = 0; i < numberOfQuestions; i++) {
     questions.push(<td>{"Q" + (i+1)}</td>);
     answers.push(<td>{uniqueAnswers[i]}</td>)
