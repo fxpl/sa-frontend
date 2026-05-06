@@ -5,11 +5,12 @@ let someData: number = 3;
 let all_question: number[] = [];
 const all_stats: stat[] = [];
 
-export function TempWriteData(answer: number, question: number, assessment: Assessment) {
+export function TempWriteData(answer: number, question: number, assessment: Assessment, userID : number | null) {
   const stats: stat = {
     answer: answer,
     questionId: question,
-    assessment: assessment
+    assessment: assessment,
+    userID: userID == null ? -1 : userID
   };
 
   all_stats.push(stats);
@@ -26,15 +27,53 @@ export function TempGetAllQuestions(): number[] {
   return all_question;
 }
 
-export function TempGetStatsById(id: number): stat | null {
-  for (let i = 0; i < all_stats.length; i++) {
-    if (all_stats[i].assessment.id == id) {
-      return all_stats[i];
+
+// This is ineffcient, hopefully we don't need this when using database 
+export function GetQuestionIdOffset(assessmentId : number) : number {
+  for(let i = 0; i < all_stats.length; i++) {
+    if (all_stats[i].assessment.id == assessmentId) {
+      return all_stats[i].assessment.questions[0].id;
+
     }
   }
 
-  console.log('ERROR no statistics for assessment with id ', id);
-  return null;
+  console.log("Error, could not find QuestionIdOffset");
+  return 0;
+}
+
+export function TempGetAllStatsByAssessmentAndQuestionId(assessmentId: number, questionId : number): stat[] {
+  let stats : stat[] = [];    
+  console.log("AssessmentID, QuestionUD" , assessmentId, questionId);
+  for (let i = 0; i < all_stats.length; i++) {
+    console.log(all_stats[i])
+    if (all_stats[i].assessment.id == assessmentId && all_stats[i].questionId == questionId) {
+      stats.push(all_stats[i]);
+    }
+  }
+
+  
+  return stats;
+}
+
+export function GetAllStatsInAssessment(assessmentId : number) : stat[] {
+  let stats : stat[] = []
+  for (let i = 0; i < all_stats.length;i++) {
+    if (all_stats[i].assessment.id == assessmentId) {
+      stats.push(all_stats[i])
+    } 
+  }
+
+  return stats;
+}
+
+export function GetNumberOfQuestion(assessmentId: number) : number {
+  for (let i = 0; i < all_stats.length;i++ ) {
+    if (all_stats[i].assessment.id == assessmentId) {
+      return all_stats[i].assessment.questions.length;
+    }
+  }
+
+  return -1;
 }
 
 export function clearTempValues() {

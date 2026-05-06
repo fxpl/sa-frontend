@@ -4,14 +4,18 @@ import classNames from 'classnames';
 import defaultCoverImage from '../../assets/default_cover_image.jpg';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { AssessmentOverview } from './AssessmentTypes';
-import { TempGetAllQuestions, TempGetStatsById } from 'src/features/statistics/middleman';
-import { statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
+import { GetNumberOfQuestion, GetQuestionIdOffset, TempGetAllQuestions, TempGetAllStatsByAssessmentAndQuestionId } from 'src/features/statistics/middleman';
+import { GetNumberOfCorrectAnswers, GetNumberOfUniqueAnswers, GetTotalNumberOfStudents, statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
 import { Role } from 'src/commons/application/ApplicationTypes';
 import NotificationBadge from 'src/commons/notificationBadge/NotificationBadge';
 import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/NotificationBadgeHelper';
 import { beforeNow, getPrettyDate } from 'src/commons/utils/DateHelper';
 import { useResponsive, useSession } from 'src/commons/utils/Hooks';
 import Markdown from 'src/commons/Markdown';
+import { stat } from 'src/features/statistics/StatisticsTypes';
+import '../../styles/statisticsStyle.module.scss';
+
+
 
 type AssessmentOverviewCardProps = {
   /** The assessment overview to display */
@@ -25,20 +29,35 @@ type AssessmentOverviewCardProps = {
 const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   overview,
   renderAttemptButton,
-  renderGradingTooltip
+  renderGradingTooltip,
 }) => {
   const { isMobileBreakpoint } = useResponsive();
   const { role } = useSession();
   const isAdmin = role === Role.Admin;
 
+  // FIXME: lots of errorchecking needed!
   const statsAllQuestions = TempGetAllQuestions();
+  const assessmentId = overview.id;
+  let stat : stat;
+  const numberOfQuestions = GetNumberOfQuestion(assessmentId);
 
-  const stat = TempGetStatsById(overview.id);
+  let arr : number[] = []
+  let unique : number[] = []
 
-  console.log(stat);
-  if (stat !== null) {
-    statisticsGetNumberOfCorrectAnswers(stat.assessment, stat?.questionId);
+  const questionIdOffst = GetQuestionIdOffset(assessmentId);
+  for (let i = 0; i < numberOfQuestions; i++) {
+    let a = TempGetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst);
+    arr[i] = GetNumberOfCorrectAnswers(a); 
+    unique[i] = GetNumberOfUniqueAnswers(a);
   }
+      
+  const listOfAnswers = arr.map(arr => <li>{arr}</li>);
+  const listOfUniqueAnswers = unique // = unique.map(unique => <li style = {{display: "inline-block" }}>{unique}</li>); //Unique as in only one answer from each student
+
+  //console.log(stat);
+  //if (stat !== null) {
+    //statisticsGetNumberOfCorrectAnswers(stat.assessment, stat?.questionId);
+  //}
   return (
     <div>
       <Card className="row listing" elevation={Elevation.ONE}>
@@ -66,12 +85,8 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
           {isAdmin ? (
             <div className="listing-statistics">
               <div>
-                <H6>{statsAllQuestions.length > 0 ? stat?.answer : 'No answers yet...'}</H6>
-
-                <H6> Finished: 28/45 </H6>
-              </div>
-
-              <img src="https://robohash.org/Linn" />
+                <H6>{statsAllQuestions.length > 0 ? Table(numberOfQuestions, listOfUniqueAnswers) : 'No answers yet...'}</H6>
+              </div>    
             </div>
           ) : (
             <div>
@@ -104,6 +119,29 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
     </div>
   );
 };
+
+
+async function Table(numberOfQuestions : number, uniqueAnswers : number[]) {
+  const questions = [];
+  const answers = [];
+  const students = await GetTotalNumberOfStudents();
+  console.log("students: ", students);
+  for (let i = 0; i < numberOfQuestions; i++) {
+    questions.push(<td>{"Q" + (i+1)}</td>);
+    answers.push(<td>{uniqueAnswers[i]}</td>)
+  }
+
+  return (
+    <table >
+    <tr >
+      {questions}
+    </tr>
+    <tr>
+      {answers}
+    </tr>
+  </table> 
+  )
+}
 
 type AssessmentOverviewCardTitleProps = {
   overview: AssessmentOverview;

@@ -1,5 +1,4 @@
 // vilka filer behöver vi ha
-
 import { Assessment } from 'src/commons/assessment/AssessmentTypes';
 
 // Vad ska vi importa?
@@ -10,6 +9,7 @@ export type stat = {
   answer: number;
   questionId: number;
   assessment: Assessment;
+  userID: Number
 };
 
 export type QuizStatistic = {};

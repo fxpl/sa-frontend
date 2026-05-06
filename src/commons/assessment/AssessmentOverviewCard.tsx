@@ -12,8 +12,8 @@ import { useResponsive } from '../utils/Hooks';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { AssessmentOverview } from './AssessmentTypes';
 
+/** The assessment overview to display */
 type AssessmentOverviewCardProps = {
-  /** The assessment overview to display */
   overview: AssessmentOverview;
   /** Will only render the attempt button if true, regardless of attempt status. */
   renderAttemptButton: boolean;
