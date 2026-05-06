@@ -15,7 +15,7 @@ export function GetNumberOfCorrectAnswers(stats : stat[]) : number {
 
 export function GetNumberOfUniqueAnswers(stats : stat[] ) : number {
   let counter : number = 0;
-  let usedUserID : Number[] = [];
+  let usedUserID : number[] = [];
 
   for (let i = 0; i < stats.length;i++) {
       if (CheckIfUnique(stats[i].userID, usedUserID)) {
@@ -30,11 +30,15 @@ export function GetNumberOfUniqueAnswers(stats : stat[] ) : number {
 export async function* GetTotalNumberOfStudents() {
   const tokens: Tokens = yield selectTokens();
   const students: User[] | null = yield call(getStudents, tokens);
-
   yield students == null ? 0 : students.length; 
 }
 
-function CheckIfUnique(value: object, list : object[]) : boolean {
+
+export function GetAverageNumberOfTries(stats : stat[], uniqueAnswers : number) : number {
+  return uniqueAnswers == 0 ? 0 : stats.length / uniqueAnswers; 
+}
+
+function CheckIfUnique(value: number, list : number[]) : boolean {
   for (let i = 0; i < list.length; i++) {
     if (list[i] == value) {
       return false;

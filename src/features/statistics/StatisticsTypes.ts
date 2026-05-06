@@ -9,7 +9,7 @@ export type stat = {
   answer: number;
   questionId: number;
   assessment: Assessment;
-  userID: Number
+  userID: number
 };
 
 export type QuizStatistic = {};

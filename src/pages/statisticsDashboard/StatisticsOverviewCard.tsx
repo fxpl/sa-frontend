@@ -5,7 +5,7 @@ import defaultCoverImage from '../../assets/default_cover_image.jpg';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { AssessmentOverview } from './AssessmentTypes';
 import { GetNumberOfQuestion, GetQuestionIdOffset, TempGetAllQuestions, TempGetAllStatsByAssessmentAndQuestionId } from 'src/features/statistics/middleman';
-import { GetNumberOfCorrectAnswers, GetNumberOfUniqueAnswers, GetTotalNumberOfStudents, statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
+import { GetAverageNumberOfTries, GetNumberOfCorrectAnswers, GetNumberOfUniqueAnswers, GetTotalNumberOfStudents, statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
 import { Role } from 'src/commons/application/ApplicationTypes';
 import NotificationBadge from 'src/commons/notificationBadge/NotificationBadge';
 import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/NotificationBadgeHelper';
@@ -43,12 +43,14 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 
   let arr : number[] = []
   let unique : number[] = []
+  let tries : number[] = []
 
   const questionIdOffst = GetQuestionIdOffset(assessmentId);
   for (let i = 0; i < numberOfQuestions; i++) {
     let a = TempGetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst);
     arr[i] = GetNumberOfCorrectAnswers(a); 
     unique[i] = GetNumberOfUniqueAnswers(a);
+    tries[i] = GetAverageNumberOfTries(a, unique[i]);
   }
       
   const listOfAnswers = arr.map(arr => <li>{arr}</li>);
@@ -85,7 +87,7 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
           {isAdmin ? (
             <div className="listing-statistics">
               <div>
-                <H6>{statsAllQuestions.length > 0 ? Table(numberOfQuestions, listOfUniqueAnswers) : 'No answers yet...'}</H6>
+                <H6>{statsAllQuestions.length > 0 ? Table(numberOfQuestions, listOfUniqueAnswers, tries) : 'No answers yet...'}</H6>
               </div>    
             </div>
           ) : (
@@ -121,23 +123,33 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 };
 
 
-function Table(numberOfQuestions : number, uniqueAnswers : number[]) {
+function Table(numberOfQuestions : number, uniqueAnswers : number[], tries : number[]) {
   const questions = [];
   const answers = [];
+  const avgTries = [];
   //const students = await GetTotalNumberOfStudents();
   //console.log("students: ", students);
+
+  questions.push(<td>Questions</td>);
+  answers.push(<td>Answers</td>);
+  avgTries.push(<td>Average Tries</td>);
+  
   for (let i = 0; i < numberOfQuestions; i++) {
-    questions.push(<td>{"Q" + (i+1)}</td>);
+    questions.push(<td>{"Q" + (i+1) + " "}</td>);
     answers.push(<td>{uniqueAnswers[i]}</td>)
+    avgTries.push(<td>{tries[i]}</td>)
   }
 
   return (
     <table >
-    <tr >
+    <tr>
       {questions}
     </tr>
     <tr>
       {answers}
+    </tr>
+    <tr>
+      {avgTries}
     </tr>
   </table> 
   )

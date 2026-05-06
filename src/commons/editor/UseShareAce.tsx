@@ -141,7 +141,7 @@ const useShareAce: EditorHook = (inProps, outProps, keyBindings, reactAceRef) =>
     // WebSocket connection status detection logic
     const WS = ShareAce.WS;
     // Since interval is used as a closure.
-    // eslint-disable-next-line prefer-const
+     
     let interval: any;
     const checkStatus = async () => {
       if (ShareAce === null) {
