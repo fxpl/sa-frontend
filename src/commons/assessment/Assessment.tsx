@@ -33,6 +33,7 @@ import { convertParamToInt } from '../utils/ParamParseHelper';
 import AssessmentNotFound from './AssessmentNotFound';
 import AssessmentOverviewCard from './AssessmentOverviewCard';
 import {
+  QuestionTypes,
   AssessmentConfiguration,
   AssessmentOverview,
   AssessmentStatuses,
@@ -79,26 +80,24 @@ const Assessment: React.FC = () => {
 
   const sortAssessments = (assessments: AssessmentOverview[]) => sortBy(assessments, [a => -a.id]);
 
-  const makeSubmissionButton = (overview: AssessmentOverview) => (
+  const makeSubmissionButton = (overview: AssessmentOverview) => //Actaully ResetButton
+      assessmentConfigToLoad.type !== 'Quiz' ? (
     <Tooltip
-      disabled={overview.status === AssessmentStatuses.attempted}
-      content={'You can finalize after saving an answer for each question!'}
+      content={'Reset your answers to the quiz'}
       position={Position.RIGHT}
     >
       <Button
-        disabled={overview.status !== AssessmentStatuses.attempted}
-        icon={IconNames.CONFIRM}
-        intent={overview.status === AssessmentStatuses.attempted ? Intent.DANGER : Intent.NONE}
+        disabled={overview.status === AssessmentStatuses.not_attempted}
+        icon={IconNames.RESET}
         variant="minimal"
         // intentional: each listing renders its own version of onClick
         // tslint:disable-next-line:jsx-no-lambda
         onClick={() => setBetchaAssessment(overview)}
       >
-        <span>Finalize</span>
-        <span className="custom-hidden-xxs"> Submission</span>
+        <span>Reset</span>
       </Button>
     </Tooltip>
-  );
+  ) : null;
 
   // Rendering Logic
   const assessmentConfigToLoad = useLoaderData() as AssessmentConfiguration;
@@ -230,22 +229,16 @@ const Assessment: React.FC = () => {
 
   // Define the warning text when finalising submissions
   const hasBonusXp = (betchaAssessment?.earlySubmissionXp as number) > 0;
-  const warningText = hasBonusXp ? (
+  const warningText = (
     <p>
-      Finalising your submission early grants you additional XP, but{' '}
-      <span className="warning">this action is irreversible.</span>
-    </p>
-  ) : (
-    <p>
-      Finalising your submission early does not grant you additional XP, and{' '}
-      <span className="warning">this action is irreversible.</span>
+      <span className="warning">This action is irreversible.</span>
     </p>
   );
 
   // Define the betcha dialog (in each card's menu)
   const submissionText = betchaAssessment ? (
     <p>
-      You are about to finalise your submission for the {betchaAssessment.type.toLowerCase()}{' '}
+      You are about to delete your answers for the
       <i>&quot;{betchaAssessment.title}&quot;</i>.
     </p>
   ) : (
@@ -264,7 +257,7 @@ const Assessment: React.FC = () => {
       isCloseButtonShown={true}
       isOpen={betchaAssessment !== null}
       onClose={setBetchaAssessmentNull}
-      title="Finalise submission?"
+      title="Reset quiz?"
     >
       <DialogBody>
         <Text>{betchaText}</Text>
@@ -278,7 +271,7 @@ const Assessment: React.FC = () => {
               options={{ minimal: false }}
             />
             <ControlButton
-              label="Finalise"
+              label="Reset"
               onClick={handleSubmitAssessment}
               options={{ minimal: false, intent: Intent.DANGER }}
             />
