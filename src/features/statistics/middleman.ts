@@ -1,8 +1,6 @@
 import { Assessment } from 'src/commons/assessment/AssessmentTypes';
 import { stat, Statistic } from './StatisticsTypes';
 
-let someData: number = 3;
-let all_question: number[] = [];
 const all_stats: stat[] = [];
 
 export function TempWriteData(answer: number, question: number, assessment: Assessment, userID : number | null) {
@@ -14,19 +12,7 @@ export function TempWriteData(answer: number, question: number, assessment: Asse
   };
 
   all_stats.push(stats);
-  someData = answer;
-  all_question.push(question);
-  console.log('Writing Data', someData);
 }
-
-export function TempReadData() {
-  return someData;
-}
-
-export function TempGetAllQuestions(): number[] {
-  return all_question;
-}
-
 
 // This is ineffcient, hopefully we don't need this when using database 
 export function GetQuestionIdOffset(assessmentId : number) : number {
@@ -74,10 +60,4 @@ export function GetNumberOfQuestion(assessmentId: number) : number {
   }
 
   return -1;
-}
-
-export function clearTempValues() {
-  console.log('Cleared temp values!');
-  all_question = [];
-  someData = 0;
 }
