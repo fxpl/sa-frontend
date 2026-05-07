@@ -15,7 +15,7 @@ export function GetNumberOfCorrectAnswers(stats : stat[]) : number {
 
 export function GetNumberOfUniqueAnswers(stats : stat[] ) : number {
   let counter : number = 0;
-  let usedUserID : number[] = [];
+  const usedUserID : number[] = [];
 
   for (let i = 0; i < stats.length;i++) {
       if (CheckIfUnique(stats[i].userID, usedUserID)) {

@@ -38,22 +38,20 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   // FIXME: lots of errorchecking needed!
   const statsAllQuestions = TempGetAllQuestions();
   const assessmentId = overview.id;
-  let stat : stat;
   const numberOfQuestions = GetNumberOfQuestion(assessmentId);
 
-  let arr : number[] = []
-  let unique : number[] = []
-  let tries : number[] = []
+  const arr : number[] = []
+  const unique : number[] = []
+  const tries : number[] = []
 
   const questionIdOffst = GetQuestionIdOffset(assessmentId);
   for (let i = 0; i < numberOfQuestions; i++) {
-    let a = TempGetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst);
+    const a = TempGetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst);
     arr[i] = GetNumberOfCorrectAnswers(a); 
     unique[i] = GetNumberOfUniqueAnswers(a);
     tries[i] = GetAverageNumberOfTries(a, unique[i]);
   }
       
-  const listOfAnswers = arr.map(arr => <li>{arr}</li>);
   const listOfUniqueAnswers = unique // = unique.map(unique => <li style = {{display: "inline-block" }}>{unique}</li>); //Unique as in only one answer from each student
 
   //console.log(stat);

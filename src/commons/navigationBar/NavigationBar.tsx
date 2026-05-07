@@ -32,6 +32,7 @@ import AcademyNavigationBar, {
 } from './subcomponents/AcademyNavigationBar';
 import NavigationBarLangSelectButton from './subcomponents/NavigationBarLangSelectButton';
 import SicpNavigationBar from './subcomponents/SicpNavigationBar';
+import { Role } from '../application/ApplicationTypes';
 
 export type NavbarEntryInfo = {
   to: string;
@@ -161,10 +162,10 @@ const NavigationBar: React.FC = () => {
         disabled: !(isEnrolledInACourse && (enableContestLeaderboard || enableOverallLeaderboard))
       },
       {
-        to: '/statisticsDashboard', // TODO:
-        icon: IconNames.CODE, // TODO: better icon
+        to: '/statisticsDashboard',
+        icon: IconNames.Satellite, // TODO: better icon
         text: 'Statistics',
-        disabled: !isEnrolledInACourse
+        disabled: !(role === Role.Admin )
       }
     ];
   }, [

@@ -42,7 +42,7 @@ export function GetQuestionIdOffset(assessmentId : number) : number {
 }
 
 export function TempGetAllStatsByAssessmentAndQuestionId(assessmentId: number, questionId : number): stat[] {
-  let stats : stat[] = [];    
+  const stats : stat[] = [];    
   console.log("AssessmentID, QuestionUD" , assessmentId, questionId);
   for (let i = 0; i < all_stats.length; i++) {
     console.log(all_stats[i])
@@ -56,7 +56,7 @@ export function TempGetAllStatsByAssessmentAndQuestionId(assessmentId: number, q
 }
 
 export function GetAllStatsInAssessment(assessmentId : number) : stat[] {
-  let stats : stat[] = []
+  const stats : stat[] = []
   for (let i = 0; i < all_stats.length;i++) {
     if (all_stats[i].assessment.id == assessmentId) {
       stats.push(all_stats[i])
