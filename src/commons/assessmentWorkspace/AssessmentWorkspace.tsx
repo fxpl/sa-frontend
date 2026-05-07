@@ -22,6 +22,7 @@ import { onClickProgress } from 'src/features/assessments/AssessmentUtils';
 import LeaderboardActions from 'src/features/leaderboard/LeaderboardActions';
 import Messages, { sendToWebview } from 'src/features/vscode/messages';
 import { mobileOnlyTabIds } from 'src/pages/playground/PlaygroundTabs';
+import { makeSubstVisualizerTabFrom } from 'src/pages/playground/PlaygroundTabs';
 
 import { initSession, log } from '../../features/eventLogging';
 import {
@@ -126,6 +127,7 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
     isRunning,
     output,
     replValue,
+    usingSubst,
     currentAssessment: storedAssessmentId,
     currentQuestion: storedQuestionId
   } = useTypedSelector(store => store.workspaces[workspaceLocation]);
@@ -136,6 +138,7 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
     handleTestcaseEval,
     handleClearContext,
     handleChangeExecTime,
+    handleUsingSubst,
     handleUpdateCurrentAssessmentId,
     handleResetWorkspace,
     handleRunAllTestcases,
@@ -159,6 +162,8 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
         dispatch(WorkspaceActions.beginClearContext(workspaceLocation, library, shouldInitLibrary)),
       handleChangeExecTime: (execTimeMs: number) =>
         dispatch(WorkspaceActions.changeExecTime(execTimeMs, workspaceLocation)),
+      handleUsingSubst: (usingSubst: boolean) =>
+        dispatch(WorkspaceActions.toggleUsingSubst(usingSubst, workspaceLocation)),
       handleUpdateCurrentAssessmentId: (assessmentId: number, questionId: number) =>
         dispatch(WorkspaceActions.updateCurrentAssessmentId(assessmentId, questionId)),
       handleResetWorkspace: (options: Partial<WorkspaceState>) =>
@@ -312,6 +317,12 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
   const activeTab = useRef(selectedTab);
   activeTab.current = selectedTab;
   const handleEval = useCallback(() => {
+    if (activeTab.current === SideContentType.substVisualizer) {
+      handleUsingSubst(true);
+    } else {
+      handleUsingSubst(false);
+    }
+
     // Run testcases when the autograder tab is selected
     if (activeTab.current === SideContentType.autograder) {
       handleRunAllTestcases();
@@ -330,6 +341,11 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
   /* ================
      Helper Functions
      ================ */
+
+  const substVisualizerTab = useMemo(() => {
+    return makeSubstVisualizerTabFrom(workspaceLocation, output);
+  }, [output, workspaceLocation]);
+
   /**
    * Checks if there is a need to reset the workspace, then executes
    * a dispatch (in the props) if needed.
@@ -408,6 +424,7 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
     handleChangeExecTime(
       question.library.execTimeMs ?? defaultWorkspaceManager.assessment.execTime
     );
+
     handleClearContext(question.library, true);
     handleUpdateHasUnsavedChanges(false);
 
@@ -601,6 +618,13 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
           id: SideContentType.autograder
         }
       );
+
+      if (
+        question.type === QuestionTypes.programming &&
+        (question.library.chapter === 1 || question.library.chapter === 2)
+      ) {
+        tabs.push(substVisualizerTab);
+      }
     }
 
     if (isGraded) {
@@ -847,18 +871,26 @@ const AssessmentWorkspace: React.FC<AssessmentWorkspaceProps> = props => {
   };
 
   const replButtons = useMemo(() => {
-    const clearButton = (
-      <ControlBarClearButton
-        handleReplOutputClear={() => dispatch(WorkspaceActions.clearReplOutput(workspaceLocation))}
-        key="clear_repl"
-      />
-    );
-    const evalButton = (
-      <ControlBarEvalButton handleReplEval={handleReplEval} isRunning={isRunning} key="eval_repl" />
-    );
+    const clearButton =
+      selectedTab === SideContentType.substVisualizer ? null : (
+        <ControlBarClearButton
+          handleReplOutputClear={() =>
+            dispatch(WorkspaceActions.clearReplOutput(workspaceLocation))
+          }
+          key="clear_repl"
+        />
+      );
+    const evalButton =
+      selectedTab === SideContentType.substVisualizer ? null : (
+        <ControlBarEvalButton
+          handleReplEval={handleReplEval}
+          isRunning={isRunning}
+          key="eval_repl"
+        />
+      );
 
     return [evalButton, clearButton];
-  }, [dispatch, isRunning, handleReplEval]);
+  }, [dispatch, isRunning, handleReplEval, selectedTab]);
 
   const editorContainerHandlers = useMemo(() => {
     return {
@@ -1019,6 +1051,9 @@ It is safe to close this window.`}
     handleReplValueChange: replHandlers.handleReplValueChange,
     output: output,
     replValue: replValue,
+    usingSubst: usingSubst,
+    hidden:
+      selectedTab === SideContentType.substVisualizer || selectedTab === SideContentType.cseMachine,
     sourceChapter: question?.library?.chapter || Chapter.SOURCE_4,
     sourceVariant: question.library.variant ?? Variant.DEFAULT,
     externalLibrary: question?.library?.external?.name || 'NONE',
@@ -1035,7 +1070,9 @@ It is safe to close this window.`}
     mcqProps: mcqProps,
     sideBarProps: sideBarProps,
     sideContentProps: sideContentProps(props, questionId),
-    replProps: replProps
+    replProps: replProps,
+    sideContentIsResizeable:
+      selectedTab !== SideContentType.substVisualizer && selectedTab !== SideContentType.cseMachine
   };
   const mobileWorkspaceProps: MobileWorkspaceProps = {
     editorContainerProps: editorContainerProps,

@@ -419,7 +419,8 @@ export const defaultWorkspaceManager: WorkspaceManagerState = {
     ...createDefaultWorkspace('assessment'),
     currentAssessment: undefined,
     currentQuestion: undefined,
-    hasUnsavedChanges: false
+    hasUnsavedChanges: false,
+    usingSubst: false
   },
   grading: {
     ...createDefaultWorkspace('grading'),
