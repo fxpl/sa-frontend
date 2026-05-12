@@ -29,15 +29,14 @@ export function GetQuestionIdOffset(assessmentId : number) : number {
 
 export function TempGetAllStatsByAssessmentAndQuestionId(assessmentId: number, questionId : number): stat[] {
   const stats : stat[] = [];    
-  console.log("AssessmentID, QuestionUD" , assessmentId, questionId);
+  //console.log("AssessmentID, QuestionUD" , assessmentId, questionId);
   for (let i = 0; i < all_stats.length; i++) {
-    console.log(all_stats[i])
     if (all_stats[i].assessment.id == assessmentId && all_stats[i].questionId == questionId) {
       stats.push(all_stats[i]);
     }
   }
 
-  
+
   return stats;
 }
 

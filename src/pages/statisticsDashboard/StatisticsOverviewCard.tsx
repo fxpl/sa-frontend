@@ -4,8 +4,8 @@ import classNames from 'classnames';
 import defaultCoverImage from '../../assets/default_cover_image.jpg';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { AssessmentOverview } from './AssessmentTypes';
-import { GetNumberOfQuestion, GetQuestionIdOffset, TempGetAllQuestions, TempGetAllStatsByAssessmentAndQuestionId } from 'src/features/statistics/middleman';
-import { GetAverageNumberOfTries, GetNumberOfCorrectAnswers, GetNumberOfUniqueAnswers, GetTotalNumberOfStudents, statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
+import { GetNumberOfQuestion, GetQuestionIdOffset, TempGetAllStatsByAssessmentAndQuestionId } from 'src/features/statistics/middleman';
+import { GetAverageNumberOfTries, GetNumberOfCorrectAnswers, GetNumberOfUniqueAnswers, GetStatsFromDatabase, GetTotalNumberOfStudents, statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
 import { Role } from 'src/commons/application/ApplicationTypes';
 import NotificationBadge from 'src/commons/notificationBadge/NotificationBadge';
 import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/NotificationBadgeHelper';
@@ -14,6 +14,9 @@ import { useResponsive, useSession } from 'src/commons/utils/Hooks';
 import Markdown from 'src/commons/Markdown';
 import { stat } from 'src/features/statistics/StatisticsTypes';
 import '../../styles/statisticsStyle.module.scss';
+import { getHealth, getStatistics } from 'src/commons/sagas/RequestsSaga';
+import { Tokens } from 'src/commons/application/types/SessionTypes';
+
 
 
 
@@ -32,18 +35,17 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   renderGradingTooltip,
 }) => {
   const { isMobileBreakpoint } = useResponsive();
-  const { role } = useSession();
+  const { role,accessToken, refreshToken } = useSession();
   const isAdmin = role === Role.Admin;
-
+  const at = accessToken;
+  const rt = refreshToken;
   // FIXME: lots of errorchecking needed!
-  const statsAllQuestions = TempGetAllQuestions();
   const assessmentId = overview.id;
   const numberOfQuestions = GetNumberOfQuestion(assessmentId);
 
   const arr : number[] = []
   const unique : number[] = []
   const tries : number[] = []
-
   const questionIdOffst = GetQuestionIdOffset(assessmentId);
   for (let i = 0; i < numberOfQuestions; i++) {
     const a = TempGetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst);
@@ -51,7 +53,17 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
     unique[i] = GetNumberOfUniqueAnswers(a);
     tries[i] = GetAverageNumberOfTries(a, unique[i]);
   }
-      
+  
+  const tokens: Tokens = {
+    accessToken: at!,
+    refreshToken: rt!
+  };
+
+  const a = GetStatsFromDatabase(assessmentId,tokens); 
+
+  console.log("next", a.next());
+
+  //conanswer_statisticssole.log(getHealth());
   const listOfUniqueAnswers = unique // = unique.map(unique => <li style = {{display: "inline-block" }}>{unique}</li>); //Unique as in only one answer from each student
 
   //console.log(stat);
@@ -85,7 +97,7 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
           {isAdmin ? (
             <div className="listing-statistics">
               <div>
-                <H6>{statsAllQuestions.length > 0 ? Table(numberOfQuestions, listOfUniqueAnswers, tries) : 'No answers yet...'}</H6>
+                <H6>{numberOfQuestions > 0 ? Table(numberOfQuestions, listOfUniqueAnswers, tries) : 'No answers yet...'}</H6>
               </div>    
             </div>
           ) : (

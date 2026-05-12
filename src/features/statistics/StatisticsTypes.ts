@@ -12,6 +12,9 @@ export type stat = {
   userID: number
 };
 
+
+
+
 export type QuizStatistic = {};
 
 export type ExerciseStatistic = {};

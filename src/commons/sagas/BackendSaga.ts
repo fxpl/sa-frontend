@@ -65,6 +65,7 @@ import {
   getLatestCourseRegistrationAndConfiguration,
   getNotifications,
   getSourcecastIndex,
+  getStatistics,
   getStudents,
   getTeamFormationOverview,
   getTeamFormationOverviews,
@@ -81,6 +82,7 @@ import {
   postReautogradeAnswer,
   postReautogradeSubmission,
   postSourcecast,
+  postStatistic,
   postTeams,
   postUnsubmit,
   postUploadTeams,
@@ -101,6 +103,7 @@ import {
   uploadAssessment
 } from './RequestsSaga';
 import { safeTakeEvery as takeEvery } from './SafeEffects';
+import { stat } from 'src/features/statistics/StatisticsTypes';
 
 export function selectTokens() {
   return select((state: OverallState) => ({
@@ -302,8 +305,12 @@ const newBackendSagaOne = combineSagaHandlers({
       user: User | null;
     } = yield call(getUser, tokens);
     MM.TempWriteData(+answer, questionId, assessment,user == null ? null : user.userId);
+    
+    // TODO: post statistics to backend
+    //yield call(postStatistic, questionId, assessment.id, +answer, tokens); // TODO: remove tempwrite after fix
+    //const a : stat[] | null = yield call(getStatistics,assessment.id,tokens)
+    //console.log(a);
 
-    console.log(assessment);
     const newQuestions = assessment.questions.slice().map((question: Question) => {
       if (question.id === questionId) {
         return { ...question, answer };

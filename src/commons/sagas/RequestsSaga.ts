@@ -61,6 +61,7 @@ import { castLibrary } from '../utils/CastBackend';
 import Constants from '../utils/Constants';
 import { showWarningMessage } from '../utils/notifications/NotificationsHelper';
 import { request } from '../utils/RequestHelper';
+import { stat } from 'src/features/statistics/StatisticsTypes';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const XLSX = require('xlsx');
@@ -723,6 +724,40 @@ export const getAssessment = async (
   return assessment;
 };
 
+
+/**
+ * POST /courses/{courseId}/statistics
+ */
+export const postStatistic = async (
+  questionId: number,
+  assessmentId: number,
+  answer: number,
+  tokens: Tokens
+): Promise<Response | null> => {
+  return request(`${courseId()}/statistics`, 'POST', {
+    ...tokens,
+    body: { questionId, assessmentId, answer }
+  });
+};
+
+/**
+ * GET /courses/{courseId}/admin/statistics?assessment_id=X
+ */
+export const getStatistics = async (
+  assessmentId: number,
+  tokens: Tokens
+): Promise<stat[] | null> => {
+  const resp = await request(`${courseId()}/admin/statistics?assessment_id=${assessmentId}`, 'GET', {
+    ...tokens
+  });
+  if (!resp || !resp.ok) {
+    return null;
+  }
+
+  return await resp.json()
+};
+
+
 /**
  * POST /courses/{courseId}/assessments/question/{questionId}/answer
  */
@@ -736,6 +771,7 @@ export const postAnswer = async (
     body: typeof answer == 'object' ? { answer: answer } : { answer: `${answer}` },
     noHeaderAccept: true
   });
+  console.log('${courseId()}/assessments/question/${id}/answer');
   return resp;
 };
 
