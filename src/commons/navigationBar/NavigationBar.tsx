@@ -165,7 +165,7 @@ const NavigationBar: React.FC = () => {
         to: '/statisticsDashboard',
         icon: IconNames.Satellite, // TODO: better icon
         text: 'Statistics',
-        disabled: !(role === Role.Admin )
+        disabled: !(role === Role.Admin || role === Role.Staff)
       }
     ];
   }, [

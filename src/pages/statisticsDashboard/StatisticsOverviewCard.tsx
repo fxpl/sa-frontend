@@ -12,12 +12,8 @@ import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/N
 import { beforeNow, getPrettyDate } from 'src/commons/utils/DateHelper';
 import { useResponsive, useSession } from 'src/commons/utils/Hooks';
 import Markdown from 'src/commons/Markdown';
-import { stat } from 'src/features/statistics/StatisticsTypes';
 import '../../styles/statisticsStyle.module.scss';
-import { getHealth, getStatistics } from 'src/commons/sagas/RequestsSaga';
 import { Tokens } from 'src/commons/application/types/SessionTypes';
-
-
 
 
 type AssessmentOverviewCardProps = {
@@ -36,7 +32,7 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 }) => {
   const { isMobileBreakpoint } = useResponsive();
   const { role,accessToken, refreshToken } = useSession();
-  const isAdmin = role === Role.Admin;
+  const isAdminOrStaff = role === Role.Admin || role === Role.Staff;
   const at = accessToken;
   const rt = refreshToken;
   // FIXME: lots of errorchecking needed!
@@ -94,15 +90,15 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
             <Markdown content={overview.shortSummary} />
           </div>
 
-          {isAdmin ? (
+          {isAdminOrStaff ? (
             <div className="listing-statistics">
               <div>
-                <H6>{numberOfQuestions > 0 ? Table(numberOfQuestions, listOfUniqueAnswers, tries) : 'No answers yet...'}</H6>
+                <H6>{numberOfQuestions > 0 ? Table(numberOfQuestions, listOfUniqueAnswers, tries) : 'No answers submitted'}</H6>
               </div>    
             </div>
           ) : (
             <div>
-              <H6> Student </H6>
+              <H6> If you are a student and are seeing this, conntact course teachers </H6>
             </div>
           )}
 
@@ -141,7 +137,7 @@ function Table(numberOfQuestions : number, uniqueAnswers : number[], tries : num
   //console.log("students: ", students);
 
   questions.push(<td>Questions</td>);
-  answers.push(<td>Answers</td>);
+  answers.push(<td>Students</td>);
   avgTries.push(<td>Average Tries</td>);
   
   for (let i = 0; i < numberOfQuestions; i++) {
