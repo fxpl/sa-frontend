@@ -35,37 +35,37 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   const isAdminOrStaff = role === Role.Admin || role === Role.Staff;
   const at = accessToken;
   const rt = refreshToken;
+
+  if (at == undefined || rt == undefined) {
+    return (<div>Accesstoken expired, please login again</div>)
+  }
+
+  const tokens: Tokens = {
+    accessToken: at,
+    refreshToken: rt
+  };
+
   // FIXME: lots of errorchecking needed!
   const assessmentId = overview.id;
   const numberOfQuestions = GetNumberOfQuestion(assessmentId);
 
-  const arr : number[] = []
   const unique : number[] = []
   const tries : number[] = []
   const questionIdOffst = GetQuestionIdOffset(assessmentId);
   for (let i = 0; i < numberOfQuestions; i++) {
     const a = TempGetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst);
-    arr[i] = GetNumberOfCorrectAnswers(a); 
     unique[i] = GetNumberOfUniqueAnswers(a);
     tries[i] = GetAverageNumberOfTries(a, unique[i]);
   }
   
-  const tokens: Tokens = {
-    accessToken: at!,
-    refreshToken: rt!
-  };
 
   const a = GetStatsFromDatabase(assessmentId,tokens); 
 
   console.log("next", a.next());
 
-  //conanswer_statisticssole.log(getHealth());
-  const listOfUniqueAnswers = unique // = unique.map(unique => <li style = {{display: "inline-block" }}>{unique}</li>); //Unique as in only one answer from each student
+  const listOfUniqueAnswers = unique;
 
-  //console.log(stat);
-  //if (stat !== null) {
-    //statisticsGetNumberOfCorrectAnswers(stat.assessment, stat?.questionId);
-  //}
+
   return (
     <div>
       <Card className="row listing" elevation={Elevation.ONE}>
