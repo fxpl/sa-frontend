@@ -61,7 +61,7 @@ import { castLibrary } from '../utils/CastBackend';
 import Constants from '../utils/Constants';
 import { showWarningMessage } from '../utils/notifications/NotificationsHelper';
 import { request } from '../utils/RequestHelper';
-import { stat } from 'src/features/statistics/StatisticsTypes';
+import { Stat } from 'src/features/statistics/StatisticsTypes';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const XLSX = require('xlsx');
@@ -742,21 +742,41 @@ export const postStatistic = async (
 
 /**
  * GET /courses/{courseId}/admin/statistics?assessment_id=X
+ * Note: Retrieves all statistics from specific assessmentId, using helper function courseId, path and what func
  */
 export const getStatistics = async (
   assessmentId: number,
   tokens: Tokens
-): Promise<stat[] | null> => {
+): Promise<Stat[] | null> => {
   const resp = await request(`${courseId()}/admin/statistics?assessment_id=${assessmentId}`, 'GET', {
     ...tokens
   });
   if (!resp || !resp.ok) {
     return null;
   }
-
-  return await resp.json()
+  const data = await resp.json();
+  return data.stats ?? null;
 };
 
+
+/**
+ * GET /courses/{courseId}/admin/statistics?question_id=X
+ * Note: should retrieve all stats from a specific question
+ * TODO: Might not need, maybe just filter out from get statistics
+ */
+export const getStatFromQuestion = async (
+  assessmentId: number,
+  questionId: number,
+  tokens: Tokens
+): Promise<Stat[] | null> => {
+  const resp = await request(`${courseId()}/admin/statistics?question_id=${questionId}`, 'GET', {
+    ...tokens
+  });
+  if (!resp || !resp.ok) {
+    return null;
+  }
+  return await resp.json()
+}
 
 /**
  * POST /courses/{courseId}/assessments/question/{questionId}/answer

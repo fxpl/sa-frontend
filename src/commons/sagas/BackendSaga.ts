@@ -19,7 +19,6 @@ import {
 } from '../../features/grading/GradingTypes';
 import type { SourcecastData } from '../../features/sourceRecorder/SourceRecorderTypes';
 import SourcereelActions from '../../features/sourceRecorder/sourcereel/SourcereelActions';
-import * as MM from '../../features/statistics/middleman';
 import type { TeamFormationOverview } from '../../features/teamFormation/TeamFormationTypes';
 import SessionActions from '../application/actions/SessionActions';
 import { type OverallState, Role } from '../application/ApplicationTypes';
@@ -103,7 +102,7 @@ import {
   uploadAssessment
 } from './RequestsSaga';
 import { safeTakeEvery as takeEvery } from './SafeEffects';
-import { stat } from 'src/features/statistics/StatisticsTypes';
+import { Stat } from 'src/features/statistics/StatisticsTypes';
 
 export function selectTokens() {
   return select((state: OverallState) => ({
@@ -297,18 +296,9 @@ const newBackendSagaOne = combineSagaHandlers({
     );
     
 
-    
-    const {
-      user,
-      
-    }: {
-      user: User | null;
-    } = yield call(getUser, tokens);
-    MM.TempWriteData(+answer, questionId, assessment,user == null ? null : user.userId);
-    
-    // TODO: post statistics to backend
-    //yield call(postStatistic, questionId, assessment.id, +answer, tokens); // TODO: remove tempwrite after fix
-    //const a : stat[] | null = yield call(getStatistics,assessment.id,tokens)
+    // Post statistics to database through http request through redux Sagas
+    yield call(postStatistic, questionId, assessment.id, +answer, tokens);
+    // const a : stat[] | null = yield call(getStatistics,assessment.id,tokens)
     //console.log(a);
 
     const newQuestions = assessment.questions.slice().map((question: Question) => {

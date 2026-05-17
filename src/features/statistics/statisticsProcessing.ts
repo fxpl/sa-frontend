@@ -1,5 +1,5 @@
 import { Assessment } from 'src/commons/assessment/AssessmentTypes';
-import { stat } from './StatisticsTypes';
+import { Stat } from './StatisticsTypes';
 import { Tokens, User } from 'src/commons/application/types/SessionTypes';
 import { selectTokens } from 'src/commons/sagas/BackendSaga';
 import { getStatistics, getStudents } from 'src/commons/sagas/RequestsSaga';
@@ -9,17 +9,17 @@ export function statisticsGetNumberOfCorrectAnswers(assessment: Assessment, ques
   // console.log(assessment.questions[questionId].answer);
 }
 
-export function GetNumberOfCorrectAnswers(stats : stat[]) : number {
+export function GetNumberOfCorrectAnswers(stats : Stat[]) : number {
   return stats.length;
 }
 
-export function GetNumberOfUniqueAnswers(stats : stat[] ) : number {
+export function GetNumberOfUniqueAnswers(stats : Stat[] ) : number {
   let counter : number = 0;
   const usedUserID : number[] = [];
 
   for (let i = 0; i < stats.length;i++) {
-      if (CheckIfUnique(stats[i].userID, usedUserID)) {
-        usedUserID.push(stats[i].userID)
+      if (CheckIfUnique(stats[i].courseRegistrationId, usedUserID)) {
+        usedUserID.push(stats[i].courseRegistrationId)
         counter++;
       }
   }
@@ -33,14 +33,15 @@ export async function* GetTotalNumberOfStudents() {
   yield students == null ? 0 : students.length; 
 }
 
+// 
 export function* GetStatsFromDatabase(assessmentId: number, tokens: Tokens) {
-  const a : stat[] | null = yield call(getStatistics,assessmentId,tokens)
-  console.log("FromDatabase", a);
-  return a;
+  const stats : Stat[] | null = yield call(getStatistics,assessmentId,tokens)
+  console.log("FromDatabase", stats);
+  return stats;
 }
 
 
-export function GetAverageNumberOfTries(stats : stat[], uniqueAnswers : number) : number {
+export function GetAverageNumberOfTries(stats : Stat[], uniqueAnswers : number) : number {
   
   return uniqueAnswers == 0 ? 0 : stats.length / uniqueAnswers; 
 }

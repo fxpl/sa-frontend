@@ -5,14 +5,21 @@ import { Assessment } from 'src/commons/assessment/AssessmentTypes';
 
 // vilka funktioner?
 
-export type stat = {
-  answer: number;
+// export type stat = {
+//   answer: number;
+//   questionId: number;
+//   assessment: Assessment;
+//   userID: number
+// };
+
+
+export type Stat = {
   questionId: number;
-  assessment: Assessment;
-  userID: number
+  assessmentId: number;
+  courseRegistrationId: number;
+  answer: number;
+  attemptNumber: number;
 };
-
-
 
 
 export type QuizStatistic = {};

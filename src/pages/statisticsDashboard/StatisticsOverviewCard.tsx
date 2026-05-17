@@ -1,70 +1,116 @@
 import { Card, Elevation, H4, H6, Icon, Intent, Position, Text, Tooltip } from '@blueprintjs/core';
 import { IconName, IconNames } from '@blueprintjs/icons';
 import classNames from 'classnames';
+import React, { useEffect, useState } from 'react';
 import defaultCoverImage from '../../assets/default_cover_image.jpg';
-import AssessmentInteractButton from './AssessmentInteractButton';
-import { AssessmentOverview } from './AssessmentTypes';
-import { GetNumberOfQuestion, GetQuestionIdOffset, TempGetAllStatsByAssessmentAndQuestionId } from 'src/features/statistics/middleman';
-import { GetAverageNumberOfTries, GetNumberOfCorrectAnswers, GetNumberOfUniqueAnswers, GetStatsFromDatabase, GetTotalNumberOfStudents, statisticsGetNumberOfCorrectAnswers } from 'src/features/statistics/statisticsProcessing';
 import { Role } from 'src/commons/application/ApplicationTypes';
+import { Tokens } from 'src/commons/application/types/SessionTypes';
 import NotificationBadge from 'src/commons/notificationBadge/NotificationBadge';
 import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/NotificationBadgeHelper';
 import { beforeNow, getPrettyDate } from 'src/commons/utils/DateHelper';
-import { useResponsive, useSession } from 'src/commons/utils/Hooks';
+import { useResponsive, useSession, useTokens } from 'src/commons/utils/Hooks';
 import Markdown from 'src/commons/Markdown';
+import { getStatistics } from 'src/commons/sagas/RequestsSaga';
+import AssessmentInteractButton from './AssessmentInteractButton';
+import { Assessment, AssessmentOverview } from './AssessmentTypes';
 import '../../styles/statisticsStyle.module.scss';
-import { Tokens } from 'src/commons/application/types/SessionTypes';
+import { Stat } from 'src/features/statistics/StatisticsTypes';
+// import { range } from 'lodash'; Remove?
 
+// 1. get all stats from assessment
+// 2. filter each stat connected to each question
+// 3.
 
 type AssessmentOverviewCardProps = {
-  /** The assessment overview to display */
   overview: AssessmentOverview;
-  /** Will only render the attempt button if true, regardless of attempt status. */
   renderAttemptButton: boolean;
   renderGradingTooltip: boolean;
 };
 
-/** A card to display `AssessmentOverview`s. */
+// Retrieves all stats given questionId, also using getStatistics call from backend.
+function getStatsByQuestionId(stats: Stat[], questionId: number): Stat[] {
+  const result: Stat[] = [];
+  for (let i = 0; i < stats.length; i++) {
+    if (stats[i].questionId === questionId) {
+      result.push(stats[i]);
+    }
+  }
+  return result;
+}
+
+// retrieves all unique questionID's
+function getUniqueQuestionIds(stats: Stat[], assessmentId: number): number[] {
+  const result: number[] = [];
+  const filtered: Stat[] = stats.filter(stat => stat.assessmentId === assessmentId);
+  for (let i = 0; i < filtered.length; i++) {
+    if (result.indexOf(filtered[i].questionId) === -1) {
+      result.push(filtered[i].questionId);
+    }
+  }
+  return result;
+}
+
+// calculates average tries for each question
+function avgTries(stats: Stat[], questionId: number): number {
+  const qStats = getStatsByQuestionId(stats, questionId);
+  if (qStats.length === 0) return 0; //qStats are now filled with single stats per question (UNIQUE)
+  let total = 0;
+  for (let i = 0; i < qStats.length; i++) {
+    total += qStats[i].attemptNumber;
+  }
+  return total / qStats.length;
+}
+
+
+function StatsTable(numberOfQuestions: number, uniqueAnswers: number[], avgTries: number[]) {
+  const questions = [<td key="q-label">Questions</td>];
+  const answers = [<td key="a-label">Unique answers</td>];
+  const tries = [<td key="t-label">Average tries</td>];
+
+  for (let i = 0; i < numberOfQuestions; i++) {
+    questions.push(<td key={`q-${i}`}>{`Q${i + 1}`}</td>);
+    answers.push(<td key={`a-${i}`}>{uniqueAnswers[i]}</td>);
+    tries.push(<td key={`t-${i}`}>{avgTries[i].toFixed(1)}</td>);
+  }
+
+  return (
+    <table>
+      <tbody>
+        <tr>{questions}</tr>
+        <tr>{answers}</tr>
+        <tr>{tries}</tr>
+      </tbody>
+    </table>
+  );
+}
+
 const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   overview,
   renderAttemptButton,
-  renderGradingTooltip,
+  renderGradingTooltip
 }) => {
   const { isMobileBreakpoint } = useResponsive();
-  const { role,accessToken, refreshToken } = useSession();
+  const { role } = useSession();
+  const tokens = useTokens({ throwWhenEmpty: false });
   const isAdminOrStaff = role === Role.Admin || role === Role.Staff;
-  const at = accessToken;
-  const rt = refreshToken;
 
-  if (at == undefined || rt == undefined) {
-    return (<div>Accesstoken expired, please login again</div>)
-  }
+  const [stats, setStats] = useState<Stat[]>([]);
 
-  const tokens: Tokens = {
-    accessToken: at,
-    refreshToken: rt
-  };
+  useEffect(() => {
+    if (!isAdminOrStaff || !tokens.accessToken) return;
+    getStatistics(overview.id, tokens as Tokens).then(data => {
+      if (data) setStats(data);
+    });
+  }, [overview.id, isAdminOrStaff, tokens.accessToken, tokens.refreshToken]);
 
-  // FIXME: lots of errorchecking needed!
-  const assessmentId = overview.id;
-  const numberOfQuestions = GetNumberOfQuestion(assessmentId);
+  //Get all questionIds in this assessment
+  const questionIds: number[] = getUniqueQuestionIds(stats, overview.id); 
 
-  const unique : number[] = []
-  const tries : number[] = []
-  const questionIdOffst = GetQuestionIdOffset(assessmentId);
-  for (let i = 0; i < numberOfQuestions; i++) {
-    const a = TempGetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst);
-    unique[i] = GetNumberOfUniqueAnswers(a);
-    tries[i] = GetAverageNumberOfTries(a, unique[i]);
-  }
-  
+  const uniqueAnswers = questionIds.map(
+    qId => getStatsByQuestionId(stats, qId).length // one row = one student
+  );
 
-  const a = GetStatsFromDatabase(assessmentId,tokens); 
-
-  console.log("next", a.next());
-
-  const listOfUniqueAnswers = unique;
-
+  const tries = questionIds.map(qId => avgTries(stats, qId));
 
   return (
     <div>
@@ -92,13 +138,15 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 
           {isAdminOrStaff ? (
             <div className="listing-statistics">
-              <div>
-                <H6>{numberOfQuestions > 0 ? Table(numberOfQuestions, listOfUniqueAnswers, tries) : 'No answers submitted'}</H6>
-              </div>    
+              <H6>
+                {stats.length > 0
+                  ? StatsTable(questionIds.length, uniqueAnswers, tries)
+                  : 'No answers yet...'}
+              </H6>
             </div>
           ) : (
             <div>
-              <H6> If you are a student and are seeing this, conntact course teachers </H6>
+              <H6>Student</H6>
             </div>
           )}
 
@@ -106,11 +154,8 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
             <div>
               <Text className="listing-due-date">
                 <Icon className="listing-due-icon" size={12} icon={IconNames.CALENDAR} />
-                {`${beforeNow(overview.openAt) ? 'Opened' : 'Opens'}: ${getPrettyDate(
-                  overview.openAt
-                )}`}
+                {`${beforeNow(overview.openAt) ? 'Opened' : 'Opens'}: ${getPrettyDate(overview.openAt)}`}
               </Text>
-
               {beforeNow(overview.openAt) && (
                 <Text className="listing-due-date">
                   <Icon className="listing-due-icon" size={12} icon={IconNames.TIME} />
@@ -129,37 +174,6 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 };
 
 
-function Table(numberOfQuestions : number, uniqueAnswers : number[], tries : number[]) {
-  const questions = [];
-  const answers = [];
-  const avgTries = [];
-  //const students = await GetTotalNumberOfStudents();
-  //console.log("students: ", students);
-
-  questions.push(<td>Questions</td>);
-  answers.push(<td>Students</td>);
-  avgTries.push(<td>Average Tries</td>);
-  
-  for (let i = 0; i < numberOfQuestions; i++) {
-    questions.push(<td>{"Q" + (i+1) + " "}</td>);
-    answers.push(<td>{uniqueAnswers[i]}</td>)
-    avgTries.push(<td>{tries[i]}</td>)
-  }
-
-  return (
-    <table >
-    <tr>
-      {questions}
-    </tr>
-    <tr>
-      {answers}
-    </tr>
-    <tr>
-      {avgTries}
-    </tr>
-  </table> 
-  )
-}
 
 type AssessmentOverviewCardTitleProps = {
   overview: AssessmentOverview;
@@ -179,7 +193,6 @@ const AssessmentOverviewCardTitle: React.FC<AssessmentOverviewCardTitleProps> = 
             className="listing-title-tooltip"
             content="This assessment is password-protected."
           >
-            AssessmentOverviewCardTitle
             <Icon icon="lock" />
           </Tooltip>
         ) : null}
@@ -199,7 +212,6 @@ const showGradingTooltip = (isGradingPublished: boolean) => {
     intent = Intent.SUCCESS;
     tooltip = 'Fully graded';
   } else {
-    // shh, hide actual grading progress from users even if graded
     iconName = IconNames.TIME;
     intent = Intent.WARNING;
     tooltip = 'Grading in progress';
