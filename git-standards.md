@@ -1,5 +1,5 @@
 ---
-description: Git policy for branching, commits, pushes, PRs, rebases, merges, force pushes, gitignore, large-file checks, history rewrites, branch protection, and repository workflow.
+description: Git policy for branching, commits, pushes, PRs, rebases, merges, gitignore, large-file checks, history rewrites, branch protection, and repository workflow.
 ---
 
 ## 0) Repository Structure
@@ -83,49 +83,13 @@ git log --oneline -10
 
 - The active repository root (lowest working folder tracked by Git) MUST have a `.gitignore`.
 
-Checks:
-
-```bash
-git rev-parse --show-toplevel
-ls -a
-git check-ignore -v <path>
-```
-
-Rules:
-- Generated artifacts, caches, logs, env files, and bulky local files SHOULD be ignored.
-- `.gitignore` updates SHOULD ship with the change that introduced the artifact.
-- Adding to `.gitignore` does not untrack existing tracked files.
-
-
-Pull-first enforcement:
-- Before push, merge, cherry-pick, rebase, reset, or rewrite, MUST first sync with remote using `git pull origin <current-branch>` (ONLY if the branch exists on the remote).
-- `git commit` and local branch creation do NOT require a pull if the work is purely local or the branch is new.
-- If pull cannot run cleanly due to local changes/conflicts, MUST solve issues in before on branch other than master.
-- Read-only commands (`git status`, `git log`, `git diff`).
-- `git fetch` alone is NOT sufficient for required sync steps in this policy.
-
-Direct push to `master` special rule:
-- Default action: MUST refuse and require PR workflow.
-- If user requests direct push to `master`, assistant MUST issue Warning #1 (high-risk warning, recommend PR path).
-- If user repeats request, assistant MUST issue Warning #2 (high-risk warning, recommend PR path again).
-- Only if user insists again after two warnings, assistant MAY proceed with explicit confirmation in the same turn.
-- Before proceeding after two warnings, assistant MUST restate the exact command(s) and ask for final yes/no confirmation.
-
-Assistant MUST NOT run without explicit approval:
-- `git reset --hard`
-- `git push --force`
-- `git push --force-with-lease`
-- `git branch -D`
-- `git push origin --delete ...`
-- rewrite commands (`git filter-repo`, `git rebase -i`, etc.)
-- `git push origin main` (unless user has insisted after two warnings and given final explicit confirmation)
-
-
 ## 5) PR Gate
 
 Before PR:
 - rebased on latest base branch
-- CI/tests pass
+- tests pass
+    run them with command: yarn test
+    if changes been made, update snapshots with " -u " flag.
 - scope is relevant to branch name
 - no accidental merge commits
 

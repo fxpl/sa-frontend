@@ -60,6 +60,7 @@ import {
   getUserCourseRegistrations,
   postAcknowledgeNotifications,
   postAnswer,
+  postStatistic,
   postAssessment,
   postAuth,
   postCreateCourse,
@@ -673,6 +674,16 @@ describe('Test SUBMIT_ANSWER action', () => {
             mockTokens
           ),
           okResp
+        ],
+        [
+          call(
+            postStatistic,
+            mockAnsweredAssessmentQuestion.id,
+            mockAssessment.id,
+            42,
+            mockTokens
+          ),
+          okResp
         ]
       ])
       .not.call.fn(showWarningMessage)
@@ -712,6 +723,16 @@ describe('Test SUBMIT_ANSWER action', () => {
             postAnswer,
             mockAnsweredAssessmentQuestion.id,
             mockAnsweredAssessmentQuestion.answer || '',
+            mockTokens
+          ),
+          okResp
+        ],
+        [
+          call(
+            postStatistic,
+            mockAnsweredAssessmentQuestion.id,
+            mockAssessment.id,
+            42,
             mockTokens
           ),
           okResp
