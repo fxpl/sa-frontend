@@ -190,6 +190,17 @@ export function* evalCodeSaga(
       };
     }
 
+    if (workspaceLocation === 'assessment') {
+      const { usingSubst } = yield* selectWorkspace(workspaceLocation);
+      return {
+        ...commons,
+        currentStep: -1,
+        cseIsActive: false,
+        needUpdateCse: false,
+        substIsActive: usingSubst
+      };
+    }
+
     return {
       ...commons,
       currentStep: -1,

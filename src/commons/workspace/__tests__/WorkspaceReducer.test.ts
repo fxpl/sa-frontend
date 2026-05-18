@@ -32,6 +32,7 @@ import type {
 
 const playgroundWorkspace: WorkspaceLocation = 'playground';
 const sicpWorkspace: WorkspaceLocation = 'sicp';
+const assessmentWorkspace: WorkspaceLocation = 'assessment';
 const locations: ReadonlyArray<WorkspaceLocation> = [
   'assessment',
   'grading',
@@ -2527,7 +2528,9 @@ describe('TOGGLE_USING_SUBST', () => {
       const location: WorkspaceLocation = action.payload.workspaceLocation;
 
       const expectedResult =
-        location === playgroundWorkspace || location === sicpWorkspace
+        location === playgroundWorkspace ||
+        location === sicpWorkspace ||
+        location == assessmentWorkspace
           ? {
               ...defaultWorkspaceManager,
               [location]: {
