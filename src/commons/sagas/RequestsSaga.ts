@@ -724,7 +724,6 @@ export const getAssessment = async (
   return assessment;
 };
 
-
 /**
  * POST /courses/{courseId}/statistics
  */
@@ -748,16 +747,19 @@ export const getStatistics = async (
   assessmentId: number,
   tokens: Tokens
 ): Promise<Stat[] | null> => {
-  const resp = await request(`${courseId()}/admin/statistics?assessment_id=${assessmentId}`, 'GET', {
-    ...tokens
-  });
+  const resp = await request(
+    `${courseId()}/admin/statistics?assessment_id=${assessmentId}`,
+    'GET',
+    {
+      ...tokens
+    }
+  );
   if (!resp || !resp.ok) {
     return null;
   }
   const data = await resp.json();
   return data.stats ?? null;
 };
-
 
 /**
  * GET /courses/{courseId}/admin/statistics?question_id=X
@@ -775,8 +777,8 @@ export const getStatFromQuestion = async (
   if (!resp || !resp.ok) {
     return null;
   }
-  return await resp.json()
-}
+  return await resp.json();
+};
 
 /**
  * POST /courses/{courseId}/assessments/question/{questionId}/answer

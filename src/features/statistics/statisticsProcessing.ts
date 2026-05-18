@@ -9,44 +9,42 @@ export function statisticsGetNumberOfCorrectAnswers(assessment: Assessment, ques
   // console.log(assessment.questions[questionId].answer);
 }
 
-export function GetNumberOfCorrectAnswers(stats : Stat[]) : number {
+export function GetNumberOfCorrectAnswers(stats: Stat[]): number {
   return stats.length;
 }
 
-export function GetNumberOfUniqueAnswers(stats : Stat[] ) : number {
-  let counter : number = 0;
-  const usedUserID : number[] = [];
+export function GetNumberOfUniqueAnswers(stats: Stat[]): number {
+  let counter: number = 0;
+  const usedUserID: number[] = [];
 
-  for (let i = 0; i < stats.length;i++) {
-      if (CheckIfUnique(stats[i].courseRegistrationId, usedUserID)) {
-        usedUserID.push(stats[i].courseRegistrationId)
-        counter++;
-      }
+  for (let i = 0; i < stats.length; i++) {
+    if (CheckIfUnique(stats[i].courseRegistrationId, usedUserID)) {
+      usedUserID.push(stats[i].courseRegistrationId);
+      counter++;
+    }
   }
 
   return counter;
-} 
+}
 
 export async function* GetTotalNumberOfStudents() {
   const tokens: Tokens = yield selectTokens();
   const students: User[] | null = yield call(getStudents, tokens);
-  yield students == null ? 0 : students.length; 
+  yield students == null ? 0 : students.length;
 }
 
-// 
+//
 export function* GetStatsFromDatabase(assessmentId: number, tokens: Tokens) {
-  const stats : Stat[] | null = yield call(getStatistics,assessmentId,tokens)
-  console.log("FromDatabase", stats);
+  const stats: Stat[] | null = yield call(getStatistics, assessmentId, tokens);
+  console.log('FromDatabase', stats);
   return stats;
 }
 
-
-export function GetAverageNumberOfTries(stats : Stat[], uniqueAnswers : number) : number {
-  
-  return uniqueAnswers == 0 ? 0 : stats.length / uniqueAnswers; 
+export function GetAverageNumberOfTries(stats: Stat[], uniqueAnswers: number): number {
+  return uniqueAnswers == 0 ? 0 : stats.length / uniqueAnswers;
 }
 
-function CheckIfUnique(value: number, list : number[]) : boolean {
+function CheckIfUnique(value: number, list: number[]): boolean {
   for (let i = 0; i < list.length; i++) {
     if (list[i] == value) {
       return false;
@@ -55,8 +53,3 @@ function CheckIfUnique(value: number, list : number[]) : boolean {
 
   return true;
 }
-
-
-
-
-

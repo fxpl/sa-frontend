@@ -676,13 +676,7 @@ describe('Test SUBMIT_ANSWER action', () => {
           okResp
         ],
         [
-          call(
-            postStatistic,
-            mockAnsweredAssessmentQuestion.id,
-            mockAssessment.id,
-            42,
-            mockTokens
-          ),
+          call(postStatistic, mockAnsweredAssessmentQuestion.id, mockAssessment.id, 42, mockTokens),
           okResp
         ]
       ])
@@ -728,13 +722,7 @@ describe('Test SUBMIT_ANSWER action', () => {
           okResp
         ],
         [
-          call(
-            postStatistic,
-            mockAnsweredAssessmentQuestion.id,
-            mockAssessment.id,
-            42,
-            mockTokens
-          ),
+          call(postStatistic, mockAnsweredAssessmentQuestion.id, mockAssessment.id, 42, mockTokens),
           okResp
         ]
       ])

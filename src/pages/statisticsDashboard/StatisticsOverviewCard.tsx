@@ -12,7 +12,7 @@ import { useResponsive, useSession, useTokens } from 'src/commons/utils/Hooks';
 import Markdown from 'src/commons/Markdown';
 import { getStatistics } from 'src/commons/sagas/RequestsSaga';
 import AssessmentInteractButton from './AssessmentInteractButton';
-import { Assessment, AssessmentOverview } from './AssessmentTypes';
+import { AssessmentOverview } from './AssessmentTypes';
 import '../../styles/statisticsStyle.module.scss';
 import { Stat } from 'src/features/statistics/StatisticsTypes';
 // import { range } from 'lodash'; Remove?
@@ -61,7 +61,6 @@ function avgTries(stats: Stat[], questionId: number): number {
   return total / qStats.length;
 }
 
-
 function StatsTable(numberOfQuestions: number, uniqueAnswers: number[], avgTries: number[]) {
   const questions = [<td key="q-label">Questions</td>];
   const answers = [<td key="a-label">Unique answers</td>];
@@ -104,7 +103,7 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   }, [overview.id, isAdminOrStaff, tokens.accessToken, tokens.refreshToken]);
 
   //Get all questionIds in this assessment
-  const questionIds: number[] = getUniqueQuestionIds(stats, overview.id); 
+  const questionIds: number[] = getUniqueQuestionIds(stats, overview.id);
 
   const uniqueAnswers = questionIds.map(
     qId => getStatsByQuestionId(stats, qId).length // one row = one student
@@ -172,8 +171,6 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
     </div>
   );
 };
-
-
 
 type AssessmentOverviewCardTitleProps = {
   overview: AssessmentOverview;

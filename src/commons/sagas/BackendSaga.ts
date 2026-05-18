@@ -64,7 +64,6 @@ import {
   getLatestCourseRegistrationAndConfiguration,
   getNotifications,
   getSourcecastIndex,
-  getStatistics,
   getStudents,
   getTeamFormationOverview,
   getTeamFormationOverviews,
@@ -102,7 +101,6 @@ import {
   uploadAssessment
 } from './RequestsSaga';
 import { safeTakeEvery as takeEvery } from './SafeEffects';
-import { Stat } from 'src/features/statistics/StatisticsTypes';
 
 export function selectTokens() {
   return select((state: OverallState) => ({
@@ -260,7 +258,7 @@ const newBackendSagaOne = combineSagaHandlers({
   },
   [SessionActions.fetchAssessmentAdmin.type]: function* (action) {
     const tokens: Tokens = yield selectTokens();
-    
+
     const { assessmentId, courseRegId } = action.payload;
 
     const assessment: Assessment | null = yield call(
@@ -277,7 +275,7 @@ const newBackendSagaOne = combineSagaHandlers({
     const tokens: Tokens = yield selectTokens();
     const questionId = action.payload.id;
     const answer = action.payload.answer;
-    
+
     const resp: Response | null = yield call(postAnswer, questionId, answer, tokens);
     if (!resp || !resp.ok) {
       return yield handleResponseError(resp);
@@ -294,7 +292,6 @@ const newBackendSagaOne = combineSagaHandlers({
     const assessment: any = yield select(
       (state: OverallState) => state.session.assessments[assessmentId]
     );
-    
 
     // Post statistics to database through http request through redux Sagas
     yield call(postStatistic, questionId, assessment.id, +answer, tokens);
@@ -431,7 +428,7 @@ const newBackendSagaOne = combineSagaHandlers({
     const students: User[] | null = yield call(getStudents, tokens);
 
     if (students) {
-      console.log("AMount of students: ", students.length);
+      console.log('AMount of students: ', students.length);
       yield put(actions.updateStudents(students));
     }
   },
