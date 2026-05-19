@@ -80,7 +80,7 @@ const Assessment: React.FC = () => {
 
   const sortAssessments = (assessments: AssessmentOverview[]) => sortBy(assessments, [a => -a.id]);
 
-  const makeSubmissionButton = (overview: AssessmentOverview) => //Actaully ResetButton
+  const makeResetButton = (overview: AssessmentOverview) => //Actaully ResetButton
       assessmentConfigToLoad.type !== 'Quiz' ? (
     <Tooltip
       content={'Reset your answers to the quiz'}
@@ -159,7 +159,7 @@ const Assessment: React.FC = () => {
           overview={overview}
           renderAttemptButton={role !== Role.Student}
           renderGradingTooltip={false}
-          makeSubmissionButton={makeSubmissionButton}
+          makeResetButton={makeResetButton}
         />
       )
     );
@@ -177,7 +177,7 @@ const Assessment: React.FC = () => {
         overview={overview}
         renderAttemptButton
         renderGradingTooltip={false}
-        makeSubmissionButton={makeSubmissionButton}
+        makeResetButton={makeResetButton}
       />
     ));
 
@@ -192,7 +192,7 @@ const Assessment: React.FC = () => {
         overview={overview}
         renderAttemptButton
         renderGradingTooltip
-        makeSubmissionButton={makeSubmissionButton}
+        makeResetButton={makeResetButton}
       />
     ));
 
