@@ -92,6 +92,7 @@ const SessionActions = createActions('session', {
     saveAnswer
   }),
   submitAssessment: (id: number) => id,
+  resetAssessment: (assessmentId: number) => ({assessmentId}),
   submitGrading: (
     submissionId: number,
     questionId: number,

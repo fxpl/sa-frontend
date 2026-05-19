@@ -70,9 +70,9 @@ const Assessment: React.FC = () => {
   const toggleOpenAssessments = () => setShowOpenedAssessments(!showOpenedAssessments);
   const toggleUpcomingAssessments = () => setShowUpcomingAssessments(!showUpcomingAssessments);
   const setBetchaAssessmentNull = () => setBetchaAssessment(null);
-  const handleSubmitAssessment = () => {
+  const handleResetAssessment = () => {
     if (betchaAssessment) {
-      dispatch(SessionActions.submitAssessment(betchaAssessment.id));
+      dispatch(SessionActions.resetAssessment(betchaAssessment.id));
       setBetchaAssessmentNull();
     }
   };
@@ -271,7 +271,7 @@ const Assessment: React.FC = () => {
             />
             <ControlButton
               label="Reset"
-              onClick={delete_assessment_answers}
+              onClick={handleResetAssessment}
               options={{ minimal: false, intent: Intent.DANGER }}
             />
           </>

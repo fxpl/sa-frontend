@@ -128,8 +128,8 @@ export const postRefresh = async (refreshToken: string): Promise<Tokens | null> 
 export const deleteAssessmentAnswers = async (
   tokens: Tokens,
   assessmentId: number, 
-): Promise< Number | null > => {
-  const resp = await request(`${courseId()}/assessments/${assessmentId}`, 'DELETE', {
+): Promise< Response | null > => {
+  const resp = await request(`${courseId()}/assessments/${assessmentId}/delete_assessment_answers`, 'DELETE', {
     ...tokens
   });
 
@@ -137,9 +137,7 @@ export const deleteAssessmentAnswers = async (
     return null;
   };
 
-  const deletedRows = await resp.json();
-
-  return deletedRows[0]
+  return resp;
 };
 
 /**
