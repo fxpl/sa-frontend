@@ -80,7 +80,7 @@ const Assessment: React.FC = () => {
 
   const sortAssessments = (assessments: AssessmentOverview[]) => sortBy(assessments, [a => -a.id]);
 
-  const makeResetButton = (overview: AssessmentOverview) => //Actaully ResetButton
+  const makeResetButton = (overview: AssessmentOverview) =>
       assessmentConfigToLoad.type !== 'Quiz' ? (
     <Tooltip
       content={'Reset your answers to the quiz'}
@@ -272,7 +272,7 @@ const Assessment: React.FC = () => {
             />
             <ControlButton
               label="Reset"
-              onClick={handleSubmitAssessment}
+              onClick={delete_assessment_answers}
               options={{ minimal: false, intent: Intent.DANGER }}
             />
           </>
