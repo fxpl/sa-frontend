@@ -7,8 +7,8 @@ import { Assessment } from 'src/commons/assessment/AssessmentTypes';
 
 export type stat = {
   answer: number;
-  questionId: number;
-  assessment: Assessment;
+  question_id: number;
+  assessment_id: number;
   userID: number
 };
 

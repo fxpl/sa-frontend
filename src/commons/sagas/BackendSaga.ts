@@ -283,9 +283,7 @@ const newBackendSagaOne = combineSagaHandlers({
     if (!resp || !resp.ok) {
       return yield handleResponseError(resp);
     }
-    console.log('Innan save!');
-    console.log(answer);
-    console.log(questionId);
+
     yield call(showSuccessMessage, 'Saved!', 1000);
 
     // Now, update the answer for the question in the assessment in the store
@@ -304,10 +302,9 @@ const newBackendSagaOne = combineSagaHandlers({
     }: {
       user: User | null;
     } = yield call(getUser, tokens);
-    MM.TempWriteData(+answer, questionId, assessment,user == null ? null : user.userId);
     
-    // TODO: post statistics to backend
-    //yield call(postStatistic, questionId, assessment.id, +answer, tokens); // TODO: remove tempwrite after fix
+    // TODO: post statistics to backend, add userID
+    yield call(postStatistic, questionId, assessment.id, +answer, tokens); // TODO: remove tempwrite after fix
     //const a : stat[] | null = yield call(getStatistics,assessment.id,tokens)
     //console.log(a);
 

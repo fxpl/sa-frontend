@@ -754,8 +754,28 @@ export const getStatistics = async (
     return null;
   }
 
-  return await resp.json()
+   const data = await resp.json();
+  return data.stats ?? null;
 };
+
+
+export const getStatFromQuestion = async (
+  assessmentId: number,
+  questionId: number,
+  tokens: Tokens
+): Promise<stat[] | null> => {
+
+  const resp = await request(`${courseId()}/admin/statistics?assessment_id=${assessmentId} ${courseId()}/admin/statistics?question_id=${questionId}`, 'GET', {
+    ...tokens
+  });
+
+  if (!resp || !resp.ok) {
+    return null;
+  }
+
+  return await resp.json()
+
+}
 
 
 /**
