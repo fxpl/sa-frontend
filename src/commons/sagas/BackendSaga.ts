@@ -345,7 +345,7 @@ const newBackendSagaOne = combineSagaHandlers({
 
   [SessionActions.resetAssessment.type]: function* (action) {
   const tokens: Tokens = yield selectTokens(); //Retrieve tokens from current user
-  const assessmentId = action.payload.assessmentId; //get assessmentId
+  const assessmentId = action.payload; //get assessmentId
 
   const resp: Response | null = yield call(deleteAssessmentAnswers, tokens, assessmentId);
   if (!resp || !resp.ok) {
