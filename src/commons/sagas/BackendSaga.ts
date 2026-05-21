@@ -309,9 +309,6 @@ const newBackendSagaOne = combineSagaHandlers({
       user: User | null;
     } = yield call(getUser, tokens);
     
-    // TODO: userID currently not working
-    // TODO: cast non interger answers  
-    
     yield call(
       postStatistic,
       questionId,
