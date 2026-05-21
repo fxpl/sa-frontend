@@ -19,7 +19,6 @@ import {
 } from '../../features/grading/GradingTypes';
 import type { SourcecastData } from '../../features/sourceRecorder/SourceRecorderTypes';
 import SourcereelActions from '../../features/sourceRecorder/sourcereel/SourcereelActions';
-import * as MM from '../../features/statistics/middleman';
 import type { TeamFormationOverview } from '../../features/teamFormation/TeamFormationTypes';
 import SessionActions from '../application/actions/SessionActions';
 import { type OverallState, Role } from '../application/ApplicationTypes';
@@ -294,8 +293,6 @@ const newBackendSagaOne = combineSagaHandlers({
       (state: OverallState) => state.session.assessments[assessmentId]
     );
     
-
-    
     const {
       user,
       
@@ -303,11 +300,10 @@ const newBackendSagaOne = combineSagaHandlers({
       user: User | null;
     } = yield call(getUser, tokens);
     
-    // TODO: post statistics to backend, add userID
-    yield call(postStatistic, questionId, assessment.id, +answer, tokens); // TODO: remove tempwrite after fix
-    //const a : stat[] | null = yield call(getStatistics,assessment.id,tokens)
-    //console.log(a);
-
+    // TODO: userID currently not working
+    // TODO: cast non interger answers  
+    yield call(postStatistic, questionId, assessment.id, user != null ? user.userId : 0, +answer, tokens); 
+     
     const newQuestions = assessment.questions.slice().map((question: Question) => {
       if (question.id === questionId) {
         return { ...question, answer };

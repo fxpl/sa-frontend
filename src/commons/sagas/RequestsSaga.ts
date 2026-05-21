@@ -731,12 +731,13 @@ export const getAssessment = async (
 export const postStatistic = async (
   questionId: number,
   assessmentId: number,
+  userID: number,
   answer: number,
   tokens: Tokens
 ): Promise<Response | null> => {
   return request(`${courseId()}/statistics`, 'POST', {
     ...tokens,
-    body: { questionId, assessmentId, answer }
+    body: { questionId, assessmentId, userID, answer}
   });
 };
 
