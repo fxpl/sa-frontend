@@ -293,6 +293,15 @@ const newBackendSagaOne = combineSagaHandlers({
       (state: OverallState) => state.session.assessments[assessmentId]
     );
     
+    let intAnswer = answer;
+
+    for (let i = 0; i < assessment.questions.length; i++) {
+      if (assessment.questions[i].id == questionId &&
+          !(assessment.questions[i].type == "mcq")) {
+            intAnswer = -1;
+      }
+    }
+
     const {
       user,
       
@@ -302,7 +311,15 @@ const newBackendSagaOne = combineSagaHandlers({
     
     // TODO: userID currently not working
     // TODO: cast non interger answers  
-    yield call(postStatistic, questionId, assessment.id, user != null ? user.userId : 0, +answer, tokens); 
+    
+    yield call(
+      postStatistic,
+      questionId,
+      assessment.id,
+      user != null ? user.userId : 0,
+      +intAnswer,
+      tokens
+    ); 
      
     const newQuestions = assessment.questions.slice().map((question: Question) => {
       if (question.id === questionId) {
