@@ -18,7 +18,7 @@ type AssessmentOverviewCardProps = {
   /** Will only render the attempt button if true, regardless of attempt status. */
   renderAttemptButton: boolean;
   renderGradingTooltip: boolean;
-  makeSubmissionButton: (overview: AssessmentOverview) => JSX.Element;
+  makeResetButton: (overview: AssessmentOverview) => JSX.Element;
 };
 
 /** A card to display `AssessmentOverview`s. */
@@ -26,7 +26,7 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   overview,
   renderAttemptButton,
   renderGradingTooltip,
-  makeSubmissionButton
+  makeResetButton
 }) => {
   const { isMobileBreakpoint } = useResponsive();
   return (
@@ -48,7 +48,7 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
           <AssessmentOverviewCardTitle
             overview={overview}
             renderProgressStatus={renderGradingTooltip}
-            makeSubmissionButton={makeSubmissionButton}
+            makeResetButton={makeResetButton}
           />
           <div className="listing-description">
             <Markdown content={overview.shortSummary} />
@@ -90,13 +90,13 @@ const AssessmentOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 type AssessmentOverviewCardTitleProps = {
   overview: AssessmentOverview;
   renderProgressStatus: boolean;
-  makeSubmissionButton: (overview: AssessmentOverview) => JSX.Element;
+  makeResetButton: (overview: AssessmentOverview) => JSX.Element;
 };
 
 const AssessmentOverviewCardTitle: React.FC<AssessmentOverviewCardTitleProps> = ({
   overview,
   renderProgressStatus,
-  makeSubmissionButton
+  makeResetButton
 }) => (
   <div className="listing-header">
     <Text ellipsize={true}>
@@ -113,7 +113,7 @@ const AssessmentOverviewCardTitle: React.FC<AssessmentOverviewCardTitleProps> = 
         {renderProgressStatus ? showGradingTooltip(overview.isGradingPublished) : null}
       </H4>
     </Text>
-    <div className="listing-button">{makeSubmissionButton(overview)}</div>
+    <div className="listing-button">{makeResetButton(overview)}</div>
   </div>
 );
 

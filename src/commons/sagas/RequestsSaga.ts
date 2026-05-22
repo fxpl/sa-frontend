@@ -124,6 +124,24 @@ export const postRefresh = async (refreshToken: string): Promise<Tokens | null> 
 };
 
 /**
+ * DELETE ${courseId()}/assessments/${assessmentId}
+ */
+export const deleteAssessmentAnswers = async (
+  tokens: Tokens,
+  assessmentId: number, 
+): Promise< Response | null > => {
+  const resp = await request(`${courseId()}/assessments/${assessmentId}/delete_assessment_answers`, 'DELETE', {
+    ...tokens
+  });
+
+  if (!resp) {
+    return null;
+  };
+
+  return resp;
+};
+
+/**
  * GET /user
  */
 export const getUser = async (

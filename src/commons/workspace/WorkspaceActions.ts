@@ -15,6 +15,7 @@ import type {
   EditorTabState,
   SubmissionsTableFilters,
   WorkspaceLocation,
+  WorkspaceLocationsWithSubst,
   WorkspaceLocationsWithTools,
   WorkspaceState
 } from './WorkspaceTypes';
@@ -231,7 +232,7 @@ const newActions = createActions('workspace', {
     context: Context,
     workspaceLocation?: WorkspaceLocation
   ) => ({ result, lastDebuggerResult, code, context, workspaceLocation }),
-  toggleUsingSubst: (usingSubst: boolean, workspaceLocation: WorkspaceLocationsWithTools) => ({
+  toggleUsingSubst: (usingSubst: boolean, workspaceLocation: WorkspaceLocationsWithSubst) => ({
     usingSubst,
     workspaceLocation
   }),
