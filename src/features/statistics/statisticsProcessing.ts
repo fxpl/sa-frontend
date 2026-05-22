@@ -5,7 +5,6 @@ import { selectTokens } from 'src/commons/sagas/BackendSaga';
 import { getAssessment, getStatistics, getStudents } from 'src/commons/sagas/RequestsSaga';
 import { call } from 'redux-saga/effects';
 
-
 export async function GetAssessment(assessmentId : number, tokens : Tokens) : Promise<Assessment | null> {  
   const assessment = await getAssessment(
       assessmentId,
@@ -45,7 +44,6 @@ export function GetAllStatsByAssessmentAndQuestionId(assessmentId: number, quest
   return stats;
 }
 
-
 export function GetNumberOfUniqueAnswers(stats : stat[] ) : number {
   let counter : number = 0;
   const usedUserID : number[] = [];
@@ -72,9 +70,7 @@ export function* GetStatsFromDatabase(assessmentId: number, tokens: Tokens) {
   return a;
 }
 
-
-export function GetAverageNumberOfTries(stats : stat[], uniqueAnswers : number) : number {
-  
+export function GetAverageNumberOfTries(stats : stat[], uniqueAnswers : number) : number {  
   return uniqueAnswers == 0 ? 0 : stats.length / uniqueAnswers; 
 }
 
@@ -87,8 +83,3 @@ function CheckIfUnique(value: number, list : number[]) : boolean {
 
   return true;
 }
-
-
-
-
-
