@@ -30,7 +30,7 @@ export function GetQuestionIdOffset(assessment : Assessment, all_stats : stat[])
   return assessment.questions[0].id;
 }
 
-export function TempGetAllStatsByAssessmentAndQuestionId(assessmentId: number, questionId : number, all_stats : stat[]): stat[] {
+export function GetAllStatsByAssessmentAndQuestionId(assessmentId: number, questionId : number, all_stats : stat[]): stat[] {
   const stats : stat[] = [];    
 
   for (let i = 0; i < all_stats.length;i++) {

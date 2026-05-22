@@ -304,7 +304,7 @@ const newBackendSagaOne = combineSagaHandlers({
 
     const {
       user,
-      
+
     }: {
       user: User | null;
     } = yield call(getUser, tokens);

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import defaultCoverImage from '../../assets/default_cover_image.jpg';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { Assessment, AssessmentOverview } from './AssessmentTypes';
-import { GetAssessment, GetAverageNumberOfTries, GetNumberOfQuestion, GetNumberOfUniqueAnswers, GetQuestionIdOffset, TempGetAllStatsByAssessmentAndQuestionId,  } from 'src/features/statistics/statisticsProcessing';
+import { GetAssessment, GetAverageNumberOfTries, GetNumberOfQuestion, GetNumberOfUniqueAnswers, GetQuestionIdOffset, GetAllStatsByAssessmentAndQuestionId,  } from 'src/features/statistics/statisticsProcessing';
 import { Role } from 'src/commons/application/ApplicationTypes';
 import NotificationBadge from 'src/commons/notificationBadge/NotificationBadge';
 import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/NotificationBadgeHelper';
@@ -86,7 +86,7 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 
   for (let i = 0; i < numberOfQuestions!; i++) {
 
-    const a = TempGetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst, stats);
+    const a = GetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst, stats);
     //console.log(a);
     unique[i] = GetNumberOfUniqueAnswers(a);
     tries[i] = GetAverageNumberOfTries(a, unique[i]);
