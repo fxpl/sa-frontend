@@ -1,9 +1,10 @@
-import { Assessment } from 'src/commons/assessment/AssessmentTypes';
-import { stat } from './StatisticsTypes';
+import { call } from 'redux-saga/effects';
 import { Tokens, User } from 'src/commons/application/types/SessionTypes';
+import { Assessment } from 'src/commons/assessment/AssessmentTypes';
 import { selectTokens } from 'src/commons/sagas/BackendSaga';
 import { getAssessment, getStatistics, getStudents } from 'src/commons/sagas/RequestsSaga';
-import { call } from 'redux-saga/effects';
+
+import { stat } from './StatisticsTypes';
 
 export async function GetAssessment(
   assessmentId: number,

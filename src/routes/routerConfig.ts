@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/react';
 import { redirect, replace, type RouteObject, Routes } from 'react-router';
+import { AssessmentConfiguration } from 'src/commons/assessment/AssessmentTypes';
 import Constants from 'src/commons/utils/Constants';
 
 import { GuardedRoute } from './routeGuard';
-import { AssessmentConfiguration } from 'src/commons/assessment/AssessmentTypes';
 
 /**
  * Partial migration to be compatible with react-router v6.4 data loader APIs.

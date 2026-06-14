@@ -65,7 +65,6 @@ import {
   getLatestCourseRegistrationAndConfiguration,
   getNotifications,
   getSourcecastIndex,
-  getStatistics,
   getStudents,
   getTeamFormationOverview,
   getTeamFormationOverviews,
@@ -103,7 +102,6 @@ import {
   uploadAssessment
 } from './RequestsSaga';
 import { safeTakeEvery as takeEvery } from './SafeEffects';
-import { stat } from 'src/features/statistics/StatisticsTypes';
 
 export function selectTokens() {
   return select((state: OverallState) => ({

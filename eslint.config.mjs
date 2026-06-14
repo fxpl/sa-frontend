@@ -76,7 +76,7 @@ export default tseslint.config(
           }
         }
       ],
-      'simple-import-sort/imports': 'off'
+      'simple-import-sort/imports': 'error'
     }
   }
 );

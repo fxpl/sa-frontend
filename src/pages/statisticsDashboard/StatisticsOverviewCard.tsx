@@ -1,28 +1,29 @@
+import '../../styles/statisticsStyle.module.scss';
+
 import { Card, Elevation, H4, H6, Icon, Intent, Position, Text, Tooltip } from '@blueprintjs/core';
 import { IconName, IconNames } from '@blueprintjs/icons';
 import classNames from 'classnames';
-import defaultCoverImage from '../../assets/default_cover_image.jpg';
-import AssessmentInteractButton from './AssessmentInteractButton';
-import { Assessment, AssessmentOverview } from './AssessmentTypes';
+import { useEffect, useState } from 'react';
+import { Role } from 'src/commons/application/ApplicationTypes';
+import { Tokens } from 'src/commons/application/types/SessionTypes';
+import AssessmentInteractButton from 'src/commons/assessment/AssessmentInteractButton';
+import { Assessment, AssessmentOverview } from 'src/commons/assessment/AssessmentTypes';
+import Markdown from 'src/commons/Markdown';
+import NotificationBadge from 'src/commons/notificationBadge/NotificationBadge';
+import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/NotificationBadgeHelper';
+import { getStatistics } from 'src/commons/sagas/RequestsSaga';
+import { beforeNow, getPrettyDate } from 'src/commons/utils/DateHelper';
+import { useResponsive, useSession } from 'src/commons/utils/Hooks';
 import {
+  GetAllStatsByAssessmentAndQuestionId,
   GetAssessment,
   GetAverageNumberOfTries,
   GetNumberOfQuestion,
   GetNumberOfUniqueAnswers,
-  GetQuestionIdOffset,
-  GetAllStatsByAssessmentAndQuestionId
-} from 'src/features/statistics/statisticsProcessing';
-import { Role } from 'src/commons/application/ApplicationTypes';
-import NotificationBadge from 'src/commons/notificationBadge/NotificationBadge';
-import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/NotificationBadgeHelper';
-import { beforeNow, getPrettyDate } from 'src/commons/utils/DateHelper';
-import { useResponsive, useSession } from 'src/commons/utils/Hooks';
-import Markdown from 'src/commons/Markdown';
-import '../../styles/statisticsStyle.module.scss';
-import { Tokens } from 'src/commons/application/types/SessionTypes';
+  GetQuestionIdOffset} from 'src/features/statistics/statisticsProcessing';
 import { stat } from 'src/features/statistics/StatisticsTypes';
-import { useEffect, useState } from 'react';
-import { getStatistics } from 'src/commons/sagas/RequestsSaga';
+
+import defaultCoverImage from '../../assets/default_cover_image.jpg';
 
 type AssessmentOverviewCardProps = {
   /** The assessment overview to display */

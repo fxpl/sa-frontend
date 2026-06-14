@@ -5,6 +5,7 @@ import {
   LeaderboardContestDetails,
   LeaderboardRow
 } from 'src/features/leaderboard/LeaderboardTypes';
+import { stat } from 'src/features/statistics/StatisticsTypes';
 import { OptionType } from 'src/pages/academy/teamFormation/subcomponents/TeamFormationForm';
 
 import {
@@ -61,7 +62,6 @@ import { castLibrary } from '../utils/CastBackend';
 import Constants from '../utils/Constants';
 import { showWarningMessage } from '../utils/notifications/NotificationsHelper';
 import { request } from '../utils/RequestHelper';
-import { stat } from 'src/features/statistics/StatisticsTypes';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const XLSX = require('xlsx');

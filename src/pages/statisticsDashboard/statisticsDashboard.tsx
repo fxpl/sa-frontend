@@ -17,11 +17,10 @@ import SessionActions from 'src/commons/application/actions/SessionActions';
 import { Role } from 'src/commons/application/ApplicationTypes';
 import AssessmentNotFound from 'src/commons/assessment/AssessmentNotFound';
 import {
-  AssessmentWorkspaceParams,
-  AssessmentOverview,
   AssessmentConfiguration,
-  AssessmentStatuses
-} from 'src/commons/assessment/AssessmentTypes';
+  AssessmentOverview,
+  AssessmentStatuses,
+  AssessmentWorkspaceParams} from 'src/commons/assessment/AssessmentTypes';
 import AssessmentWorkspace, {
   AssessmentWorkspaceProps
 } from 'src/commons/assessmentWorkspace/AssessmentWorkspace';
@@ -33,6 +32,7 @@ import { useSession, useTypedSelector } from 'src/commons/utils/Hooks';
 import { convertParamToInt } from 'src/commons/utils/ParamParseHelper';
 import { numberRegExp } from 'src/features/academy/AcademyTypes';
 import Messages, { sendToWebview } from 'src/features/vscode/messages';
+
 import StatisticsOverviewCard from './StatisticsOverviewCard';
 
 const Assessment: React.FC = () => {

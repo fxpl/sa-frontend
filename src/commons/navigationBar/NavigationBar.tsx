@@ -21,6 +21,7 @@ import { i18nDefaultLangKeys } from 'src/i18n/i18next';
 import { SentryRoutes } from 'src/routes/routerConfig';
 import classes from 'src/styles/NavigationBar.module.scss';
 
+import { Role } from '../application/ApplicationTypes';
 import Dropdown from '../dropdown/Dropdown';
 import NotificationBadge from '../notificationBadge/NotificationBadge';
 import { filterNotificationsByType } from '../notificationBadge/NotificationBadgeHelper';
@@ -32,7 +33,6 @@ import AcademyNavigationBar, {
 } from './subcomponents/AcademyNavigationBar';
 import NavigationBarLangSelectButton from './subcomponents/NavigationBarLangSelectButton';
 import SicpNavigationBar from './subcomponents/SicpNavigationBar';
-import { Role } from '../application/ApplicationTypes';
 
 export type NavbarEntryInfo = {
   to: string;
