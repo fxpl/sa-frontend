@@ -35,8 +35,6 @@ import { numberRegExp } from 'src/features/academy/AcademyTypes';
 import Messages, { sendToWebview } from 'src/features/vscode/messages';
 import StatisticsOverviewCard from './StatisticsOverviewCard';
 
-// TODO: Create new card variants
-
 const Assessment: React.FC = () => {
   const params = useParams<AssessmentWorkspaceParams>();
   const [betchaAssessment, setBetchaAssessment] = useState<AssessmentOverview | null>(null);
@@ -79,7 +77,6 @@ const Assessment: React.FC = () => {
 
   // Rendering Logic
   const assessmentConfigToLoad = useLoaderData() as AssessmentConfiguration;
-  // FIXME: Felix Shower thought nullcheck here and do not mock
 
   const assessmentOverviews = useMemo(
     () => assessmentOverviewsUnfiltered?.filter(ao => ao.type === assessmentConfigToLoad.type),

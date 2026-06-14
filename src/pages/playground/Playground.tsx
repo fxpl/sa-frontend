@@ -590,14 +590,11 @@ const Playground: React.FC<PlaygroundProps> = props => {
   );
 
   // Compute this here to avoid re-rendering the button every keystroke
-  
- 
+
   const persistenceIsDirty =
     persistenceFile && (!persistenceFile.lastSaved || persistenceFile.lastSaved < lastEdit);
   const persistenceButtons = useMemo(() => {
-    return (
-		null // Google Drive Button used to be here
-    );
+    return null; // Google Drive Button used to be here
   }, [isFolderModeEnabled, persistenceFile, persistenceUser, persistenceIsDirty, dispatch]);
 
   const githubPersistenceIsDirty =

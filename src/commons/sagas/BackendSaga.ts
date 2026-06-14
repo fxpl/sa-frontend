@@ -261,7 +261,7 @@ const newBackendSagaOne = combineSagaHandlers({
   },
   [SessionActions.fetchAssessmentAdmin.type]: function* (action) {
     const tokens: Tokens = yield selectTokens();
-    
+
     const { assessmentId, courseRegId } = action.payload;
 
     const assessment: Assessment | null = yield call(
@@ -278,7 +278,7 @@ const newBackendSagaOne = combineSagaHandlers({
     const tokens: Tokens = yield selectTokens();
     const questionId = action.payload.id;
     const answer = action.payload.answer;
-    
+
     const resp: Response | null = yield call(postAnswer, questionId, answer, tokens);
     if (!resp || !resp.ok) {
       return yield handleResponseError(resp);
@@ -293,23 +293,21 @@ const newBackendSagaOne = combineSagaHandlers({
     const assessment: any = yield select(
       (state: OverallState) => state.session.assessments[assessmentId]
     );
-    
+
     let intAnswer = answer;
 
     for (let i = 0; i < assessment.questions.length; i++) {
-      if (assessment.questions[i].id == questionId &&
-          !(assessment.questions[i].type == "mcq")) {
-            intAnswer = -1;
+      if (assessment.questions[i].id == questionId && !(assessment.questions[i].type == 'mcq')) {
+        intAnswer = -1;
       }
     }
 
     const {
-      user,
-
+      user
     }: {
       user: User | null;
     } = yield call(getUser, tokens);
-    
+
     yield call(
       postStatistic,
       questionId,
@@ -317,8 +315,8 @@ const newBackendSagaOne = combineSagaHandlers({
       user != null ? user.userId : 0,
       +intAnswer,
       tokens
-    ); 
-     
+    );
+
     const newQuestions = assessment.questions.slice().map((question: Question) => {
       if (question.id === questionId) {
         return { ...question, answer };
@@ -373,16 +371,16 @@ const newBackendSagaOne = combineSagaHandlers({
   },
 
   [SessionActions.resetAssessment.type]: function* (action) {
-  const tokens: Tokens = yield selectTokens(); //Retrieve tokens from current user
-  const assessmentId = action.payload; //get assessmentId
+    const tokens: Tokens = yield selectTokens(); //Retrieve tokens from current user
+    const assessmentId = action.payload; //get assessmentId
 
-  const resp: Response | null = yield call(deleteAssessmentAnswers, tokens, assessmentId);
-  if (!resp || !resp.ok) {
-    return yield handleResponseError(resp);
-  }
+    const resp: Response | null = yield call(deleteAssessmentAnswers, tokens, assessmentId);
+    if (!resp || !resp.ok) {
+      return yield handleResponseError(resp);
+    }
 
-  yield call(showSuccessMessage, 'Reset!', 2000); //Successful reset
-},
+    yield call(showSuccessMessage, 'Reset!', 2000); //Successful reset
+  },
 
   [SessionActions.fetchGradingOverviews.type]: function* (action) {
     const tokens: Tokens = yield selectTokens();
@@ -462,7 +460,6 @@ const newBackendSagaOne = combineSagaHandlers({
     const students: User[] | null = yield call(getStudents, tokens);
 
     if (students) {
-      console.log("AMount of students: ", students.length);
       yield put(actions.updateStudents(students));
     }
   },

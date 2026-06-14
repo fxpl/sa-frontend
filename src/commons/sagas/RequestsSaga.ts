@@ -128,15 +128,19 @@ export const postRefresh = async (refreshToken: string): Promise<Tokens | null> 
  */
 export const deleteAssessmentAnswers = async (
   tokens: Tokens,
-  assessmentId: number, 
-): Promise< Response | null > => {
-  const resp = await request(`${courseId()}/assessments/${assessmentId}/delete_assessment_answers`, 'DELETE', {
-    ...tokens
-  });
+  assessmentId: number
+): Promise<Response | null> => {
+  const resp = await request(
+    `${courseId()}/assessments/${assessmentId}/delete_assessment_answers`,
+    'DELETE',
+    {
+      ...tokens
+    }
+  );
 
   if (!resp) {
     return null;
-  };
+  }
 
   return resp;
 };
@@ -742,7 +746,6 @@ export const getAssessment = async (
   return assessment;
 };
 
-
 /**
  * POST /courses/{courseId}/statistics
  */
@@ -755,7 +758,7 @@ export const postStatistic = async (
 ): Promise<Response | null> => {
   return request(`${courseId()}/statistics`, 'POST', {
     ...tokens,
-    body: { questionId, assessmentId, userID, answer}
+    body: { questionId, assessmentId, userID, answer }
   });
 };
 
@@ -766,36 +769,40 @@ export const getStatistics = async (
   assessmentId: number,
   tokens: Tokens
 ): Promise<stat[] | null> => {
-  const resp = await request(`${courseId()}/admin/statistics?assessment_id=${assessmentId}`, 'GET', {
-    ...tokens
-  });
+  const resp = await request(
+    `${courseId()}/admin/statistics?assessment_id=${assessmentId}`,
+    'GET',
+    {
+      ...tokens
+    }
+  );
   if (!resp || !resp.ok) {
     return null;
   }
 
-   const data = await resp.json();
+  const data = await resp.json();
   return data.stats ?? null;
 };
-
 
 export const getStatFromQuestion = async (
   assessmentId: number,
   questionId: number,
   tokens: Tokens
 ): Promise<stat[] | null> => {
-
-  const resp = await request(`${courseId()}/admin/statistics?assessment_id=${assessmentId} ${courseId()}/admin/statistics?question_id=${questionId}`, 'GET', {
-    ...tokens
-  });
+  const resp = await request(
+    `${courseId()}/admin/statistics?assessment_id=${assessmentId} ${courseId()}/admin/statistics?question_id=${questionId}`,
+    'GET',
+    {
+      ...tokens
+    }
+  );
 
   if (!resp || !resp.ok) {
     return null;
   }
 
-  return await resp.json()
-
-}
-
+  return await resp.json();
+};
 
 /**
  * POST /courses/{courseId}/assessments/question/{questionId}/answer
@@ -810,7 +817,7 @@ export const postAnswer = async (
     body: typeof answer == 'object' ? { answer: answer } : { answer: `${answer}` },
     noHeaderAccept: true
   });
-  console.log('${courseId()}/assessments/question/${id}/answer');
+
   return resp;
 };
 

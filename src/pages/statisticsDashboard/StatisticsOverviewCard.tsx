@@ -4,7 +4,14 @@ import classNames from 'classnames';
 import defaultCoverImage from '../../assets/default_cover_image.jpg';
 import AssessmentInteractButton from './AssessmentInteractButton';
 import { Assessment, AssessmentOverview } from './AssessmentTypes';
-import { GetAssessment, GetAverageNumberOfTries, GetNumberOfQuestion, GetNumberOfUniqueAnswers, GetQuestionIdOffset, GetAllStatsByAssessmentAndQuestionId,  } from 'src/features/statistics/statisticsProcessing';
+import {
+  GetAssessment,
+  GetAverageNumberOfTries,
+  GetNumberOfQuestion,
+  GetNumberOfUniqueAnswers,
+  GetQuestionIdOffset,
+  GetAllStatsByAssessmentAndQuestionId
+} from 'src/features/statistics/statisticsProcessing';
 import { Role } from 'src/commons/application/ApplicationTypes';
 import NotificationBadge from 'src/commons/notificationBadge/NotificationBadge';
 import { filterNotificationsByAssessment } from 'src/commons/notificationBadge/NotificationBadgeHelper';
@@ -16,7 +23,6 @@ import { Tokens } from 'src/commons/application/types/SessionTypes';
 import { stat } from 'src/features/statistics/StatisticsTypes';
 import { useEffect, useState } from 'react';
 import { getStatistics } from 'src/commons/sagas/RequestsSaga';
-
 
 type AssessmentOverviewCardProps = {
   /** The assessment overview to display */
@@ -30,10 +36,10 @@ type AssessmentOverviewCardProps = {
 const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   overview,
   renderAttemptButton,
-  renderGradingTooltip,
+  renderGradingTooltip
 }) => {
   const { isMobileBreakpoint } = useResponsive();
-  const { role,accessToken, refreshToken } = useSession();
+  const { role, accessToken, refreshToken } = useSession();
   const isAdminOrStaff = role === Role.Admin || role === Role.Staff;
   const at = accessToken;
   const rt = refreshToken;
@@ -41,7 +47,7 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   const [stats, setStats] = useState<stat[]>([]);
   const [numberOfQuestions, setQuestions] = useState<number>();
   const [assessment, setAssessment] = useState<Assessment>();
-  
+
   const tokens: Tokens = {
     accessToken: at!,
     refreshToken: rt!
@@ -49,11 +55,11 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
 
   useEffect(() => {
     if (!isAdminOrStaff || !tokens.accessToken) return;
-      getStatistics(overview.id, tokens as Tokens).then(data => {
-        if (data) setStats(data);
-      });
-    
-    GetAssessment(overview.id,tokens as Tokens).then(data => {
+    getStatistics(overview.id, tokens as Tokens).then(data => {
+      if (data) setStats(data);
+    });
+
+    GetAssessment(overview.id, tokens as Tokens).then(data => {
       if (data) setAssessment(data);
     });
 
@@ -62,36 +68,29 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
     });
   }, [overview.id, isAdminOrStaff, tokens.accessToken, tokens.refreshToken]);
 
-   //,
+  //,
 
   if (at == undefined || rt == undefined) {
-    return (<div>Accesstoken expired, please login again</div>)
-  }
-  
-  if (numberOfQuestions == undefined) {
-    //numberOfQuestions = 0;
+    return <div>Accesstoken expired, please login again</div>;
   }
 
   if (assessment == null) {
     return;
   }
-  // FIXME: lots of errorchecking needed!
+
   const assessmentId = overview.id;
-  
-  const unique : number[] = []
-  const tries : number[] = []
+
+  const unique: number[] = [];
+  const tries: number[] = [];
   const questionIdOffst = GetQuestionIdOffset(assessment!, stats);
 
-  console.log(stats);
-
   for (let i = 0; i < numberOfQuestions!; i++) {
+    const a = GetAllStatsByAssessmentAndQuestionId(assessmentId, i + questionIdOffst, stats);
 
-    const a = GetAllStatsByAssessmentAndQuestionId(assessmentId,i + questionIdOffst, stats);
-    //console.log(a);
     unique[i] = GetNumberOfUniqueAnswers(a);
     tries[i] = GetAverageNumberOfTries(a, unique[i]);
   }
-  
+
   const listOfUniqueAnswers = unique;
 
   return (
@@ -121,8 +120,12 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
           {isAdminOrStaff ? (
             <div className="listing-statistics">
               <div>
-                <H6>{numberOfQuestions! > 0 ? Table(numberOfQuestions!, listOfUniqueAnswers, tries) : 'No answers submitted'}</H6>
-              </div>    
+                <H6>
+                  {numberOfQuestions! > 0
+                    ? Table(numberOfQuestions!, listOfUniqueAnswers, tries)
+                    : 'No answers submitted'}
+                </H6>
+              </div>
             </div>
           ) : (
             <div>
@@ -156,37 +159,28 @@ const StatisticsOverviewCard: React.FC<AssessmentOverviewCardProps> = ({
   );
 };
 
-
-function Table(numberOfQuestions : number, uniqueAnswers : number[], tries : number[]) {
+function Table(numberOfQuestions: number, uniqueAnswers: number[], tries: number[]) {
   const questions = [];
   const answers = [];
   const avgTries = [];
-  //const students = await GetTotalNumberOfStudents();
-  //console.log("students: ", students);
 
   questions.push(<td>Questions</td>);
   answers.push(<td>Students</td>);
   avgTries.push(<td>Average Tries</td>);
-  
+
   for (let i = 0; i < numberOfQuestions; i++) {
-    questions.push(<td>{"Q" + (i+1) + " "}</td>);
-    answers.push(<td>{uniqueAnswers[i]}</td>)
-    avgTries.push(<td>{tries[i]}</td>)
+    questions.push(<td>{'Q' + (i + 1) + ' '}</td>);
+    answers.push(<td>{uniqueAnswers[i]}</td>);
+    avgTries.push(<td>{tries[i]}</td>);
   }
 
   return (
-    <table >
-    <tr>
-      {questions}
-    </tr>
-    <tr>
-      {answers}
-    </tr>
-    <tr>
-      {avgTries}
-    </tr>
-  </table> 
-  )
+    <table>
+      <tr>{questions}</tr>
+      <tr>{answers}</tr>
+      <tr>{avgTries}</tr>
+    </table>
+  );
 }
 
 type AssessmentOverviewCardTitleProps = {

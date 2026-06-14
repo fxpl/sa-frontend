@@ -37,7 +37,8 @@ import {
   AssessmentOverview,
   AssessmentStatuses,
   AssessmentWorkspaceParams,
-  QuestionTypes} from './AssessmentTypes';
+  QuestionTypes
+} from './AssessmentTypes';
 
 const Assessment: React.FC = () => {
   const params = useParams<AssessmentWorkspaceParams>();
@@ -80,23 +81,20 @@ const Assessment: React.FC = () => {
   const sortAssessments = (assessments: AssessmentOverview[]) => sortBy(assessments, [a => -a.id]);
 
   const makeResetButton = (overview: AssessmentOverview) =>
-      assessmentConfigToLoad.type !== 'Quiz' ? (
-    <Tooltip
-      content={'Reset your answers to the quiz'}
-      position={Position.RIGHT}
-    >
-      <Button
-        disabled={overview.status === AssessmentStatuses.not_attempted}
-        icon={IconNames.RESET}
-        variant="minimal"
-        // intentional: each listing renders its own version of onClick
-        // tslint:disable-next-line:jsx-no-lambda
-        onClick={() => setBetchaAssessment(overview)}
-      >
-        <span>Reset</span>
-      </Button>
-    </Tooltip>
-  ) : null;
+    assessmentConfigToLoad.type !== 'Quiz' ? (
+      <Tooltip content={'Reset your answers to the quiz'} position={Position.RIGHT}>
+        <Button
+          disabled={overview.status === AssessmentStatuses.not_attempted}
+          icon={IconNames.RESET}
+          variant="minimal"
+          // intentional: each listing renders its own version of onClick
+          // tslint:disable-next-line:jsx-no-lambda
+          onClick={() => setBetchaAssessment(overview)}
+        >
+          <span>Reset</span>
+        </Button>
+      </Tooltip>
+    ) : null;
 
   // Rendering Logic
   const assessmentConfigToLoad = useLoaderData() as AssessmentConfiguration;

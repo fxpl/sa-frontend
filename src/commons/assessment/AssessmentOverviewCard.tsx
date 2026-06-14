@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import classes from 'src/styles/Academy.module.scss';
 import { JSX } from 'react';
 
-
 import defaultCoverImage from '../../assets/default_cover_image.jpg';
 import Markdown from '../Markdown';
 import NotificationBadge from '../notificationBadge/NotificationBadge';
