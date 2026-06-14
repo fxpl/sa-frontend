@@ -52,6 +52,7 @@ import type { WorkspaceLocation } from '../workspace/WorkspaceTypes';
 import {
   checkAnswerLastModifiedAt,
   deleteAssessment,
+  deleteAssessmentAnswers,
   deleteSourcecastEntry,
   deleteTeam,
   getAssessment,
@@ -80,6 +81,7 @@ import {
   postReautogradeAnswer,
   postReautogradeSubmission,
   postSourcecast,
+  postStatistic,
   postTeams,
   postUnsubmit,
   postUploadTeams,
@@ -289,6 +291,30 @@ const newBackendSagaOne = combineSagaHandlers({
     const assessment: any = yield select(
       (state: OverallState) => state.session.assessments[assessmentId]
     );
+
+    let intAnswer = answer;
+
+    for (let i = 0; i < assessment.questions.length; i++) {
+      if (assessment.questions[i].id == questionId && !(assessment.questions[i].type == 'mcq')) {
+        intAnswer = -1;
+      }
+    }
+
+    const {
+      user
+    }: {
+      user: User | null;
+    } = yield call(getUser, tokens);
+
+    yield call(
+      postStatistic,
+      questionId,
+      assessment.id,
+      user != null ? user.userId : 0,
+      +intAnswer,
+      tokens
+    );
+
     const newQuestions = assessment.questions.slice().map((question: Question) => {
       if (question.id === questionId) {
         return { ...question, answer };
@@ -341,6 +367,19 @@ const newBackendSagaOne = combineSagaHandlers({
 
     return yield put(actions.updateAssessmentOverviews(newOverviews));
   },
+
+  [SessionActions.resetAssessment.type]: function* (action) {
+    const tokens: Tokens = yield selectTokens(); //Retrieve tokens from current user
+    const assessmentId = action.payload; //get assessmentId
+
+    const resp: Response | null = yield call(deleteAssessmentAnswers, tokens, assessmentId);
+    if (!resp || !resp.ok) {
+      return yield handleResponseError(resp);
+    }
+
+    yield call(showSuccessMessage, 'Reset!', 2000); //Successful reset
+  },
+
   [SessionActions.fetchGradingOverviews.type]: function* (action) {
     const tokens: Tokens = yield selectTokens();
 
@@ -417,6 +456,7 @@ const newBackendSagaOne = combineSagaHandlers({
       return;
     }
     const students: User[] | null = yield call(getStudents, tokens);
+
     if (students) {
       yield put(actions.updateStudents(students));
     }

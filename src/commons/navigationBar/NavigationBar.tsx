@@ -21,6 +21,7 @@ import { i18nDefaultLangKeys } from 'src/i18n/i18next';
 import { SentryRoutes } from 'src/routes/routerConfig';
 import classes from 'src/styles/NavigationBar.module.scss';
 
+import { Role } from '../application/ApplicationTypes';
 import Dropdown from '../dropdown/Dropdown';
 import NotificationBadge from '../notificationBadge/NotificationBadge';
 import { filterNotificationsByType } from '../notificationBadge/NotificationBadgeHelper';
@@ -159,6 +160,12 @@ const NavigationBar: React.FC = () => {
         icon: IconNames.TIMELINE_BAR_CHART,
         text: 'Leaderboard',
         disabled: !(isEnrolledInACourse && (enableContestLeaderboard || enableOverallLeaderboard))
+      },
+      {
+        to: '/statisticsDashboard',
+        icon: IconNames.Satellite, // TODO: better icon
+        text: 'Statistics',
+        disabled: !(role === Role.Admin || role === Role.Staff)
       }
     ];
   }, [
@@ -223,7 +230,8 @@ const NavigationBar: React.FC = () => {
       '/contributors',
       `/courses/${courseId}/sourcecast`,
       `/courses/${courseId}/achievements`,
-      `/courses/${courseId}/leaderboard`
+      `/courses/${courseId}/leaderboard`,
+      '/statisticsDashboard'
     ];
     const enableDesktopPopover =
       courseId != null && !!topNavbarNavlinks.find(x => location.pathname.startsWith(x));
@@ -320,6 +328,7 @@ const NavigationBar: React.FC = () => {
         <Route path="/courses/:courseId/achievements" element={null} />
         <Route path="/courses/:courseId/leaderboard/*" element={null} />
         <Route path="/sicpjs/:section?" element={<SicpNavigationBar />} />
+        <Route path="/statisticsDashboard" element={null} />
         <Route
           path="*"
           element={

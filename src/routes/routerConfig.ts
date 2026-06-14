@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { redirect, replace, type RouteObject, Routes } from 'react-router';
+import { AssessmentConfiguration } from 'src/commons/assessment/AssessmentTypes';
 import Constants from 'src/commons/utils/Constants';
 
 import { GuardedRoute } from './routeGuard';
@@ -36,6 +37,7 @@ const NotFound = () => import('../pages/notFound/NotFound');
 const Welcome = () => import('../pages/welcome/Welcome');
 const Academy = () => import('../pages/academy/Academy');
 const MissionControl = () => import('../pages/missionControl/MissionControl');
+const StatisticsDashboard = () => import('../pages/statisticsDashboard/statisticsDashboard');
 const EditStory = async () => {
   const { EditStoryComponent } = await import('../pages/stories/Story');
   return { Component: EditStoryComponent };
@@ -86,6 +88,19 @@ export const getFullAcademyRouterConfig = ({
       return redirect(`/courses/${courseId}`);
     }
     return null;
+  };
+
+  const mockAssessmentConfig: AssessmentConfiguration = {
+    assessmentConfigId: 1,
+    type: 'Missions',
+    isManuallyGraded: true,
+    isGradingAutoPublished: false,
+    displayInDashboard: true,
+    isMinigame: false,
+    hasTokenCounter: false,
+    hasVotingFeatures: false,
+    hoursBeforeEarlyXpDecay: 48,
+    earlySubmissionXp: 200
   };
 
   const ensureUserAndRole = (r: RouteObject) => {
@@ -144,6 +159,11 @@ export const getFullAcademyRouterConfig = ({
         ensureUserAndRole({ path: 'courses/:courseId/stories/view/:id', lazy: ViewStory }),
         ensureUserAndRole({ path: 'courses/:courseId/stories/edit/:id', lazy: EditStory }),
         ensureUserAndRole({ path: 'courses/:courseId/stories', lazy: Stories }),
+        ensureUserAndRole({
+          path: 'statisticsDashboard',
+          lazy: StatisticsDashboard,
+          loader: () => mockAssessmentConfig
+        }),
         ...commonChildrenRoutes,
         { path: '*', lazy: NotFound }
       ]

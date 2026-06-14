@@ -1,44 +1,39 @@
 import {
-  Button,
   Collapse,
   Dialog,
   DialogBody,
   DialogFooter,
   Intent,
   NonIdealState,
-  Position,
   Spinner,
-  Text,
-  Tooltip
+  Text
 } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import { sortBy } from 'lodash';
 import React, { type JSX, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Navigate, useLoaderData, useParams } from 'react-router';
-import { numberRegExp } from 'src/features/academy/AcademyTypes';
-import Messages, { sendToWebview } from 'src/features/vscode/messages';
-
-import SessionActions from '../application/actions/SessionActions';
-import { Role } from '../application/ApplicationTypes';
-import AssessmentWorkspace, {
-  AssessmentWorkspaceProps
-} from '../assessmentWorkspace/AssessmentWorkspace';
-import ContentDisplay from '../ContentDisplay';
-import ControlButton from '../ControlButton';
-import Constants from '../utils/Constants';
-import { beforeNow } from '../utils/DateHelper';
-import { useSession, useTypedSelector } from '../utils/Hooks';
-import { convertParamToInt } from '../utils/ParamParseHelper';
-import AssessmentNotFound from './AssessmentNotFound';
-import AssessmentOverviewCard from './AssessmentOverviewCard';
+import SessionActions from 'src/commons/application/actions/SessionActions';
+import { Role } from 'src/commons/application/ApplicationTypes';
+import AssessmentNotFound from 'src/commons/assessment/AssessmentNotFound';
 import {
   AssessmentConfiguration,
   AssessmentOverview,
   AssessmentStatuses,
-  AssessmentWorkspaceParams,
-  QuestionTypes
-} from './AssessmentTypes';
+  AssessmentWorkspaceParams} from 'src/commons/assessment/AssessmentTypes';
+import AssessmentWorkspace, {
+  AssessmentWorkspaceProps
+} from 'src/commons/assessmentWorkspace/AssessmentWorkspace';
+import ContentDisplay from 'src/commons/ContentDisplay';
+import ControlButton from 'src/commons/ControlButton';
+import Constants from 'src/commons/utils/Constants';
+import { beforeNow } from 'src/commons/utils/DateHelper';
+import { useSession, useTypedSelector } from 'src/commons/utils/Hooks';
+import { convertParamToInt } from 'src/commons/utils/ParamParseHelper';
+import { numberRegExp } from 'src/features/academy/AcademyTypes';
+import Messages, { sendToWebview } from 'src/features/vscode/messages';
+
+import StatisticsOverviewCard from './StatisticsOverviewCard';
 
 const Assessment: React.FC = () => {
   const params = useParams<AssessmentWorkspaceParams>();
@@ -71,33 +66,18 @@ const Assessment: React.FC = () => {
   const toggleOpenAssessments = () => setShowOpenedAssessments(!showOpenedAssessments);
   const toggleUpcomingAssessments = () => setShowUpcomingAssessments(!showUpcomingAssessments);
   const setBetchaAssessmentNull = () => setBetchaAssessment(null);
-  const handleResetAssessment = () => {
+  const handleSubmitAssessment = () => {
     if (betchaAssessment) {
-      dispatch(SessionActions.resetAssessment(betchaAssessment.id));
+      dispatch(SessionActions.submitAssessment(betchaAssessment.id));
       setBetchaAssessmentNull();
     }
   };
 
   const sortAssessments = (assessments: AssessmentOverview[]) => sortBy(assessments, [a => -a.id]);
 
-  const makeResetButton = (overview: AssessmentOverview) =>
-    assessmentConfigToLoad.type !== 'Quiz' ? (
-      <Tooltip content={'Reset your answers to the quiz'} position={Position.RIGHT}>
-        <Button
-          disabled={overview.status === AssessmentStatuses.not_attempted}
-          icon={IconNames.RESET}
-          variant="minimal"
-          // intentional: each listing renders its own version of onClick
-          // tslint:disable-next-line:jsx-no-lambda
-          onClick={() => setBetchaAssessment(overview)}
-        >
-          <span>Reset</span>
-        </Button>
-      </Tooltip>
-    ) : null;
-
   // Rendering Logic
   const assessmentConfigToLoad = useLoaderData() as AssessmentConfiguration;
+
   const assessmentOverviews = useMemo(
     () => assessmentOverviewsUnfiltered?.filter(ao => ao.type === assessmentConfigToLoad.type),
     [assessmentConfigToLoad.type, assessmentOverviewsUnfiltered]
@@ -151,12 +131,11 @@ const Assessment: React.FC = () => {
       !beforeNow(overview.closeAt) && !beforeNow(overview.openAt);
     const upcomingCards = sortAssessments(assessmentOverviews.filter(isOverviewUpcoming)).map(
       overview => (
-        <AssessmentOverviewCard
+        <StatisticsOverviewCard
           key={overview.id}
           overview={overview}
           renderAttemptButton={role !== Role.Student}
           renderGradingTooltip={false}
-          makeResetButton={makeResetButton}
         />
       )
     );
@@ -169,12 +148,11 @@ const Assessment: React.FC = () => {
     const openedCards = sortAssessments(
       assessmentOverviews.filter(overview => isOverviewOpened(overview))
     ).map(overview => (
-      <AssessmentOverviewCard
+      <StatisticsOverviewCard
         key={overview.id}
         overview={overview}
         renderAttemptButton
         renderGradingTooltip={false}
-        makeResetButton={makeResetButton}
       />
     ));
 
@@ -184,12 +162,11 @@ const Assessment: React.FC = () => {
         overview => !isOverviewOpened(overview) && !isOverviewUpcoming(overview)
       )
     ).map(overview => (
-      <AssessmentOverviewCard
+      <StatisticsOverviewCard
         key={overview.id}
         overview={overview}
         renderAttemptButton
         renderGradingTooltip
-        makeResetButton={makeResetButton}
       />
     ));
 
@@ -226,16 +203,22 @@ const Assessment: React.FC = () => {
 
   // Define the warning text when finalising submissions
   const hasBonusXp = (betchaAssessment?.earlySubmissionXp as number) > 0;
-  const warningText = (
+  const warningText = hasBonusXp ? (
     <p>
-      <span className="warning">This action is irreversible.</span>
+      Finalising your submission early grants you additional XP, but{' '}
+      <span className="warning">this action is irreversible.</span>
+    </p>
+  ) : (
+    <p>
+      Finalising your submission early does not grant you additional XP, and{' '}
+      <span className="warning">this action is irreversible.</span>
     </p>
   );
 
   // Define the betcha dialog (in each card's menu)
   const submissionText = betchaAssessment ? (
     <p>
-      You are about to delete your answers for the
+      You are about to finalise your submission for the {betchaAssessment.type.toLowerCase()}{' '}
       <i>&quot;{betchaAssessment.title}&quot;</i>.
     </p>
   ) : (
@@ -254,7 +237,7 @@ const Assessment: React.FC = () => {
       isCloseButtonShown={true}
       isOpen={betchaAssessment !== null}
       onClose={setBetchaAssessmentNull}
-      title="Reset quiz?"
+      title="Finalise submission?"
     >
       <DialogBody>
         <Text>{betchaText}</Text>
@@ -268,8 +251,8 @@ const Assessment: React.FC = () => {
               options={{ minimal: false }}
             />
             <ControlButton
-              label="Reset"
-              onClick={handleResetAssessment}
+              label="Finalise"
+              onClick={handleSubmitAssessment}
               options={{ minimal: false, intent: Intent.DANGER }}
             />
           </>

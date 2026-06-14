@@ -1,5 +1,3 @@
-/* eslint-disable simple-import-sort/imports */
-
 // Next line necessary to prevent "ReferenceError: ace is not defined" error.
 // See https://github.com/securingsincity/react-ace/issues/1233 (although there is no explanation).
 import 'ace-builds/src-noconflict/ace';
@@ -7,7 +5,6 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/ext-settings_menu';
 import 'js-slang/dist/editors/ace/theme/source';
-
 /**
  * ace-builds/webpack-resolver is causing some issues in the testing environment.
  * Without it, we have to manually import the following keybindings to ensure they are packaged
@@ -19,19 +16,21 @@ import 'ace-builds/src-noconflict/keybinding-emacs';
 import 'ace-builds/src-noconflict/keybinding-vim';
 
 import { Card } from '@blueprintjs/core';
+import type { SharedbAceUser } from '@sourceacademy/sharedb-ace/types';
 import * as AceBuilds from 'ace-builds';
-import { Ace, require as acequire, createEditSession } from 'ace-builds';
+import { Ace, createEditSession,require as acequire } from 'ace-builds';
 import { Chapter, Variant } from 'js-slang/dist/langs';
 import React from 'react';
 import AceEditor, { IAceEditorProps, IEditorProps } from 'react-ace';
 import { IAceEditor } from 'react-ace/lib/types';
+
 import { SALanguage } from '../application/ApplicationTypes';
-import { EditorBinding } from '../WorkspaceSettingsContext';
+import { ExternalLibraryName } from '../application/types/ExternalTypes';
 import { getModeString, selectMode } from '../utils/AceHelper';
 import { objectEntries } from '../utils/TypeHelper';
-import { KeyFunction, keyBindings } from './EditorHotkeys';
+import { EditorBinding } from '../WorkspaceSettingsContext';
+import { keyBindings,KeyFunction } from './EditorHotkeys';
 import { AceMouseEvent, HighlightedLines, Position } from './EditorTypes';
-
 // =============== Hooks ===============
 // TODO: Should further refactor into EditorBase + different variants.
 // Ideally, hooks should be specified by the parent component instead.
@@ -39,8 +38,6 @@ import useHighlighting from './UseHighlighting';
 import useNavigation from './UseNavigation';
 import useRefactor from './UseRefactor';
 import useShareAce from './UseShareAce';
-import type { SharedbAceUser } from '@sourceacademy/sharedb-ace/types';
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
 
 export type EditorKeyBindingHandlers = { [name in KeyFunction]?: () => void };
 export type EditorHook = (

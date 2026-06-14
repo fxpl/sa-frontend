@@ -233,6 +233,12 @@
     }
   }
 
+  .listing-statistics {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
   .listing-footer {
     display: flex;
     align-items: center;

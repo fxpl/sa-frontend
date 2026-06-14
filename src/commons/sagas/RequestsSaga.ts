@@ -5,6 +5,7 @@ import {
   LeaderboardContestDetails,
   LeaderboardRow
 } from 'src/features/leaderboard/LeaderboardTypes';
+import { stat } from 'src/features/statistics/StatisticsTypes';
 import { OptionType } from 'src/pages/academy/teamFormation/subcomponents/TeamFormationForm';
 
 import {
@@ -120,6 +121,28 @@ export const postRefresh = async (refreshToken: string): Promise<Tokens | null> 
     accessToken: tokens.access_token,
     refreshToken: tokens.refresh_token
   };
+};
+
+/**
+ * DELETE ${courseId()}/assessments/${assessmentId}
+ */
+export const deleteAssessmentAnswers = async (
+  tokens: Tokens,
+  assessmentId: number
+): Promise<Response | null> => {
+  const resp = await request(
+    `${courseId()}/assessments/${assessmentId}/delete_assessment_answers`,
+    'DELETE',
+    {
+      ...tokens
+    }
+  );
+
+  if (!resp) {
+    return null;
+  }
+
+  return resp;
 };
 
 /**
@@ -724,6 +747,64 @@ export const getAssessment = async (
 };
 
 /**
+ * POST /courses/{courseId}/statistics
+ */
+export const postStatistic = async (
+  questionId: number,
+  assessmentId: number,
+  userID: number,
+  answer: number,
+  tokens: Tokens
+): Promise<Response | null> => {
+  return request(`${courseId()}/statistics`, 'POST', {
+    ...tokens,
+    body: { questionId, assessmentId, userID, answer }
+  });
+};
+
+/**
+ * GET /courses/{courseId}/admin/statistics?assessment_id=X
+ */
+export const getStatistics = async (
+  assessmentId: number,
+  tokens: Tokens
+): Promise<stat[] | null> => {
+  const resp = await request(
+    `${courseId()}/admin/statistics?assessment_id=${assessmentId}`,
+    'GET',
+    {
+      ...tokens
+    }
+  );
+  if (!resp || !resp.ok) {
+    return null;
+  }
+
+  const data = await resp.json();
+  return data.stats ?? null;
+};
+
+export const getStatFromQuestion = async (
+  assessmentId: number,
+  questionId: number,
+  tokens: Tokens
+): Promise<stat[] | null> => {
+  const resp = await request(
+    `${courseId()}/admin/statistics?assessment_id=${assessmentId} ${courseId()}/admin/statistics?question_id=${questionId}`,
+    'GET',
+    {
+      ...tokens
+    }
+  );
+
+  if (!resp || !resp.ok) {
+    return null;
+  }
+
+  return await resp.json();
+};
+
+/**
  * POST /courses/{courseId}/assessments/question/{questionId}/answer
  */
 export const postAnswer = async (
@@ -736,6 +817,7 @@ export const postAnswer = async (
     body: typeof answer == 'object' ? { answer: answer } : { answer: `${answer}` },
     noHeaderAccept: true
   });
+
   return resp;
 };
 
